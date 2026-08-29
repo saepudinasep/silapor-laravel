@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -13,6 +14,14 @@ class User extends Authenticatable
     use HasFactory, Notifiable;
 
     /**
+     * Role yang dikenal sistem.
+     */
+
+    public const ROLE_ADMIN = 'admin';
+    public const ROLE_PETUGAS = 'petugas';
+    public const ROLE_MASYARAKAT = 'masyarakat';
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var list<string>
@@ -20,7 +29,11 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'username',
         'password',
+        'role',
+        'nik',
+        'telp',
     ];
 
     /**
@@ -44,5 +57,59 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * Pengaduan yang dibuat user ini (kalau role = masyarakat)
+     */
+    public function pengaduans(): HasMany
+    {
+        return $this->hasMany(Pengaduan::class, 'user_id');
+    }
+
+    /**
+     * Tanggapan yang dibuat user ini (kalau role = petugas/admin)
+     */
+    public function tanggapans(): HasMany
+    {
+        return $this->hasMany(Tanggapan::class, 'petugas_id');
+    }
+
+    /**
+     * Scope
+     */
+
+    public function scopeMasyarakat($query)
+    {
+        return $query->where('role', self::ROLE_MASYARAKAT);
+    }
+
+    public function scopePetugas($query)
+    {
+        return $query->where('role', self::ROLE_PETUGAS);
+    }
+
+    public function scopeAdmin($query)
+    {
+        return $query->where('role', self::ROLE_ADMIN);
+    }
+
+    /**
+     * Helper role
+     */
+
+    public function isAdmin(): bool
+    {
+        return $this->role === self::ROLE_ADMIN;
+    }
+
+    public function isPetugas(): bool
+    {
+        return $this->role === self::ROLE_PETUGAS;
+    }
+
+    public function isMasyarakat(): bool
+    {
+        return $this->role === self::ROLE_MASYARAKAT;
     }
 }
