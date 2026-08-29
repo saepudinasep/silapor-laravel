@@ -11,6 +11,8 @@ class Pengaduan extends Model
 {
     use HasFactory;
 
+    protected $table = 'pengaduan';
+
     /**
      * Status yang dikenal sistem.
      */

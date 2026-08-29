@@ -33,7 +33,7 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        return redirect()->intended($this->redirectPath($request->user()));
     }
 
     /**
@@ -48,5 +48,18 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerateToken();
 
         return redirect('/');
+    }
+
+    /**
+     * Tentukan halaman tujuan setelah login berhasil, sesuai role user.
+     */
+    protected function redirectPath($user): string
+    {
+        return match ($user->role) {
+            'admin' => route('admin.dashboard', absolute: false),
+            'petugas' => route('petugas.dashboard', absolute: false),
+            'masyarakat' => route('home', absolute: false),
+            default => route('home', absolute: false),
+        };
     }
 }
