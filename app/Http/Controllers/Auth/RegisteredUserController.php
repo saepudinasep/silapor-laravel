@@ -32,21 +32,27 @@ class RegisteredUserController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'nik' => ['required', 'string', 'size:16', 'unique:' . User::class],
+            'nama' => ['required', 'string', 'max:255'],
+            'username' => ['required', 'string', 'max:255', 'unique:' . User::class],
+            'password' => ['required', 'string', Rules\Password::defaults()],
+            'telp' => ['nullable', 'string', 'max:20'],
         ]);
 
         $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
+            'nik' => $request->nik,
+            'name' => $request->nama,
+            'username' => $request->username,
+            'email' => $request->username . '@silapor.local',
             'password' => Hash::make($request->password),
+            'telp' => $request->telp,
+            'role' => User::ROLE_MASYARAKAT,
         ]);
 
         event(new Registered($user));
 
         Auth::login($user);
 
-        return redirect(route('dashboard', absolute: false));
+        return redirect(route('home', absolute: false));
     }
 }

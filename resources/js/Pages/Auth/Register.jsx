@@ -1,120 +1,163 @@
-import InputError from '@/Components/InputError';
-import InputLabel from '@/Components/InputLabel';
-import PrimaryButton from '@/Components/PrimaryButton';
-import TextInput from '@/Components/TextInput';
-import GuestLayout from '@/Layouts/GuestLayout';
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Head, Link, useForm } from "@inertiajs/react";
+import "../../../css/landing.css";
 
 export default function Register() {
     const { data, setData, post, processing, errors, reset } = useForm({
-        name: '',
-        email: '',
-        password: '',
-        password_confirmation: '',
+        nik: "",
+        nama: "",
+        username: "",
+        password: "",
+        telp: "",
     });
 
     const submit = (e) => {
         e.preventDefault();
-
-        post(route('register'), {
-            onFinish: () => reset('password', 'password_confirmation'),
+        post(route("register"), {
+            onFinish: () => reset("password"),
         });
     };
 
     return (
-        <GuestLayout>
-            <Head title="Register" />
+        <div className="auth-shell">
+            <Head title="Daftar Akun" />
+            <div className="hero-bg"></div>
 
-            <form onSubmit={submit}>
-                <div>
-                    <InputLabel htmlFor="name" value="Name" />
-
-                    <TextInput
-                        id="name"
-                        name="name"
-                        value={data.name}
-                        className="mt-1 block w-full"
-                        autoComplete="name"
-                        isFocused={true}
-                        onChange={(e) => setData('name', e.target.value)}
-                        required
-                    />
-
-                    <InputError message={errors.name} className="mt-2" />
+            <div className="auth-card">
+                <div className="auth-logo">
+                    <div className="auth-logo-icon">
+                        <svg
+                            width="20"
+                            height="20"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            strokeWidth="2.5"
+                        >
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"
+                            />
+                        </svg>
+                    </div>
+                    <div>
+                        <div className="auth-logo-text">SiLapor</div>
+                        <div className="auth-logo-sub">
+                            Pengaduan Masyarakat
+                        </div>
+                    </div>
                 </div>
 
-                <div className="mt-4">
-                    <InputLabel htmlFor="email" value="Email" />
+                <h1>Daftar Akun</h1>
+                <p className="subtitle">
+                    Buat akun untuk mulai melaporkan pengaduan
+                </p>
 
-                    <TextInput
-                        id="email"
-                        type="email"
-                        name="email"
-                        value={data.email}
-                        className="mt-1 block w-full"
-                        autoComplete="username"
-                        onChange={(e) => setData('email', e.target.value)}
-                        required
-                    />
+                <form onSubmit={submit}>
+                    <div className="form-group">
+                        <label htmlFor="nik">NIK (16 digit)</label>
+                        <input
+                            id="nik"
+                            value={data.nik}
+                            maxLength={16}
+                            onChange={(e) => setData("nik", e.target.value)}
+                            required
+                        />
+                        {errors.nik && (
+                            <div
+                                className="mt-1 text-sm"
+                                style={{ color: "#ef4444" }}
+                            >
+                                {errors.nik}
+                            </div>
+                        )}
+                    </div>
 
-                    <InputError message={errors.email} className="mt-2" />
+                    <div className="form-group">
+                        <label htmlFor="nama">Nama Lengkap</label>
+                        <input
+                            id="nama"
+                            value={data.nama}
+                            onChange={(e) => setData("nama", e.target.value)}
+                            required
+                        />
+                        {errors.nama && (
+                            <div
+                                className="mt-1 text-sm"
+                                style={{ color: "#ef4444" }}
+                            >
+                                {errors.nama}
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="form-group">
+                        <label htmlFor="username">Username</label>
+                        <input
+                            id="username"
+                            value={data.username}
+                            onChange={(e) =>
+                                setData("username", e.target.value)
+                            }
+                            required
+                        />
+                        {errors.username && (
+                            <div
+                                className="mt-1 text-sm"
+                                style={{ color: "#ef4444" }}
+                            >
+                                {errors.username}
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="form-group">
+                        <label htmlFor="password">Password</label>
+                        <input
+                            id="password"
+                            type="password"
+                            value={data.password}
+                            onChange={(e) =>
+                                setData("password", e.target.value)
+                            }
+                            required
+                        />
+                        {errors.password && (
+                            <div
+                                className="mt-1 text-sm"
+                                style={{ color: "#ef4444" }}
+                            >
+                                {errors.password}
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="form-group">
+                        <label htmlFor="telp">No. Telepon</label>
+                        <input
+                            id="telp"
+                            value={data.telp}
+                            onChange={(e) => setData("telp", e.target.value)}
+                        />
+                        {errors.telp && (
+                            <div
+                                className="mt-1 text-sm"
+                                style={{ color: "#ef4444" }}
+                            >
+                                {errors.telp}
+                            </div>
+                        )}
+                    </div>
+
+                    <button className="btn" disabled={processing}>
+                        {processing ? "Memproses..." : "Daftar"}
+                    </button>
+                </form>
+
+                <div className="switch-link">
+                    Sudah punya akun? <Link href={route("login")}>Masuk</Link>
                 </div>
-
-                <div className="mt-4">
-                    <InputLabel htmlFor="password" value="Password" />
-
-                    <TextInput
-                        id="password"
-                        type="password"
-                        name="password"
-                        value={data.password}
-                        className="mt-1 block w-full"
-                        autoComplete="new-password"
-                        onChange={(e) => setData('password', e.target.value)}
-                        required
-                    />
-
-                    <InputError message={errors.password} className="mt-2" />
-                </div>
-
-                <div className="mt-4">
-                    <InputLabel
-                        htmlFor="password_confirmation"
-                        value="Confirm Password"
-                    />
-
-                    <TextInput
-                        id="password_confirmation"
-                        type="password"
-                        name="password_confirmation"
-                        value={data.password_confirmation}
-                        className="mt-1 block w-full"
-                        autoComplete="new-password"
-                        onChange={(e) =>
-                            setData('password_confirmation', e.target.value)
-                        }
-                        required
-                    />
-
-                    <InputError
-                        message={errors.password_confirmation}
-                        className="mt-2"
-                    />
-                </div>
-
-                <div className="mt-4 flex items-center justify-end">
-                    <Link
-                        href={route('login')}
-                        className="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                    >
-                        Already registered?
-                    </Link>
-
-                    <PrimaryButton className="ms-4" disabled={processing}>
-                        Register
-                    </PrimaryButton>
-                </div>
-            </form>
-        </GuestLayout>
+            </div>
+        </div>
     );
 }
