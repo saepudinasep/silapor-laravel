@@ -112,4 +112,17 @@ class User extends Authenticatable
     {
         return $this->role === self::ROLE_MASYARAKAT;
     }
+
+    /**
+     * Route dashboard yang sesuai untuk role user ini.
+     */
+    public function dashboardRoute(): string
+    {
+        return match ($this->role) {
+            self::ROLE_ADMIN => route('admin.dashboard'),
+            self::ROLE_PETUGAS => route('petugas.dashboard'),
+            self::ROLE_MASYARAKAT => route('home'),
+            default => route('home'),
+        };
+    }
 }

@@ -9,11 +9,20 @@ use App\Http\Controllers\Admin\PetugasController as AdminPetugasController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\ProfileController;
 use App\Models\Pengaduan;
+use App\Models\User;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Auth;
 
 Route::get('/', function () {
+    if (Auth::check()) {
+        /** @var User $user */
+        $user = Auth::user();
+
+        return redirect($user->dashboardRoute());
+    }
+
     $summary = [
         'total' => Pengaduan::count(),
         'baru' => Pengaduan::status(Pengaduan::STATUS_BARU)->count(),
