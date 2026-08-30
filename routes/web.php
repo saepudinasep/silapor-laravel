@@ -4,16 +4,34 @@ use App\Http\Controllers\Dashboard\AdminDashboardController;
 use App\Http\Controllers\Dashboard\PetugasDashboardController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfileController;
+use App\Models\Pengaduan;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', function () {
+    $summary = [
+        'total' => Pengaduan::count(),
+        'baru' => Pengaduan::status(Pengaduan::STATUS_BARU)->count(),
+        'proses' => Pengaduan::status(Pengaduan::STATUS_PROSES)->count(),
+        'selesai' => Pengaduan::status(Pengaduan::STATUS_SELESAI)->count(),
+    ];
+
+    $recent = Pengaduan::with('pelapor')
+        ->latest('tgl_pengaduan')
+        ->take(6)
+        ->get()
+        ->map(fn($p) => [
+            'id_pengaduan' => $p->id,
+            'status' => $p->status,
+            'tgl_pengaduan' => $p->tgl_pengaduan,
+            'isi_laporan' => $p->isi_laporan,
+            'pelapor' => $p->pelapor->name,
+        ]);
+
     return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
+        'summary' => $summary,
+        'recent' => $recent,
     ]);
 });
 
