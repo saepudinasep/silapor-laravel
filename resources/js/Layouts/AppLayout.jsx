@@ -137,12 +137,6 @@ const ICONS = {
     ),
 };
 
-/**
- * NOTE: beberapa item nav (Buat Pengaduan, Data Pengguna, Generate Laporan)
- * masih placeholder ("#") karena route-nya belum dibuat. Ganti href ke
- * route('nama.route') begitu fitur/controllernya sudah ada, biar konsisten
- * kayak item lain yang sudah pakai route() Ziggy.
- */
 function navItemsForRole(role) {
     if (role === "masyarakat") {
         return [
@@ -163,7 +157,13 @@ function navItemsForRole(role) {
             },
             {
                 label: "Akun",
-                items: [{ href: "#", icon: "settings", label: "Pengaturan" }],
+                items: [
+                    {
+                        href: route("profile.edit"),
+                        icon: "settings",
+                        label: "Pengaturan",
+                    },
+                ],
             },
         ];
     }
@@ -192,7 +192,13 @@ function navItemsForRole(role) {
             },
             {
                 label: "Akun",
-                items: [{ href: "#", icon: "settings", label: "Pengaturan" }],
+                items: [
+                    {
+                        href: route("profile.edit"),
+                        icon: "settings",
+                        label: "Pengaturan",
+                    },
+                ],
             },
         ];
     }
@@ -207,12 +213,22 @@ function navItemsForRole(role) {
                     icon: "dashboard",
                     label: "Dashboard",
                 },
-                { href: "#", icon: "report", label: "Generate Laporan" },
+                {
+                    href: route("laporan.index"),
+                    icon: "report",
+                    label: "Generate Laporan",
+                },
             ],
         },
         {
             label: "Akun",
-            items: [{ href: "#", icon: "settings", label: "Pengaturan" }],
+            items: [
+                {
+                    href: route("profile.edit"),
+                    icon: "settings",
+                    label: "Pengaturan",
+                },
+            ],
         },
     ];
 }
