@@ -1,6 +1,6 @@
 import AppLayout from "@/Layouts/AppLayout";
-import { Head } from "@inertiajs/react";
-import { useState } from "react";
+import Pagination from "@/Components/Pagination";
+import { Head, router } from "@inertiajs/react";
 
 const STATUS_TABS = [
     { key: "", label: "Semua" },
@@ -9,12 +9,13 @@ const STATUS_TABS = [
     { key: "selesai", label: "Selesai" },
 ];
 
-export default function Petugas({ pengaduans, summary }) {
-    const [activeStatus, setActiveStatus] = useState("");
-
-    const filtered = activeStatus
-        ? pengaduans.filter((p) => p.status === activeStatus)
-        : pengaduans;
+export default function Petugas({ pengaduans, summary, filters }) {
+    function handleFilter(status) {
+        router.get(route("petugas.dashboard"), status ? { status } : {}, {
+            preserveState: true,
+            replace: true,
+        });
+    }
 
     return (
         <AppLayout title="Dashboard" eyebrow="Ringkasan Pengaduan">
@@ -39,8 +40,8 @@ export default function Petugas({ pengaduans, summary }) {
                 {STATUS_TABS.map((tab) => (
                     <button
                         key={tab.key}
-                        className={activeStatus === tab.key ? "active" : ""}
-                        onClick={() => setActiveStatus(tab.key)}
+                        className={filters.status === tab.key ? "active" : ""}
+                        onClick={() => handleFilter(tab.key)}
                     >
                         {tab.label}
                     </button>
@@ -49,7 +50,18 @@ export default function Petugas({ pengaduans, summary }) {
 
             <div className="card table-card">
                 <div className="card-header">
-                    <div className="card-title">Daftar Pengaduan</div>
+                    <div className="card-title">
+                        Daftar Pengaduan
+                        <span
+                            style={{
+                                fontWeight: 400,
+                                color: "var(--muted)",
+                                marginLeft: 8,
+                            }}
+                        >
+                            ({pengaduans.total} total)
+                        </span>
+                    </div>
                 </div>
                 <div className="table-wrap">
                     <table>
@@ -63,7 +75,7 @@ export default function Petugas({ pengaduans, summary }) {
                             </tr>
                         </thead>
                         <tbody>
-                            {filtered.length === 0 && (
+                            {pengaduans.data.length === 0 && (
                                 <tr>
                                     <td
                                         colSpan={5}
@@ -77,7 +89,7 @@ export default function Petugas({ pengaduans, summary }) {
                                     </td>
                                 </tr>
                             )}
-                            {filtered.map((p) => (
+                            {pengaduans.data.map((p) => (
                                 <tr key={p.id}>
                                     <td
                                         style={{
@@ -102,8 +114,6 @@ export default function Petugas({ pengaduans, summary }) {
                                         </span>
                                     </td>
                                     <td>
-                                        {/* TODO: ganti ke route('pengaduan.respond', p.id)
-                                            begitu halaman tanggapan petugas sudah dibuat */}
                                         <a
                                             href={route(
                                                 "petugas.pengaduan.show",
@@ -120,6 +130,8 @@ export default function Petugas({ pengaduans, summary }) {
                     </table>
                 </div>
             </div>
+
+            <Pagination links={pengaduans.links} />
         </AppLayout>
     );
 }

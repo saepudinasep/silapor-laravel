@@ -1,4 +1,5 @@
 import AppLayout from "@/Layouts/AppLayout";
+import Pagination from "@/Components/Pagination";
 import { alertError, confirmAction, promptInput } from "@/utils/swal";
 import { Head, Link, router } from "@inertiajs/react";
 
@@ -61,7 +62,18 @@ export default function Index({ list, totalAdmin, totalPetugas }) {
                         gap: 10,
                     }}
                 >
-                    <div className="card-title">Daftar Pengguna</div>
+                    <div className="card-title">
+                        Daftar Pengguna
+                        <span
+                            style={{
+                                fontWeight: 400,
+                                color: "var(--muted)",
+                                marginLeft: 8,
+                            }}
+                        >
+                            ({list.total} total)
+                        </span>
+                    </div>
                     <Link
                         href={route("admin.petugas.create")}
                         className="btn"
@@ -82,7 +94,7 @@ export default function Index({ list, totalAdmin, totalPetugas }) {
                             </tr>
                         </thead>
                         <tbody>
-                            {list.length === 0 && (
+                            {list.data.length === 0 && (
                                 <tr>
                                     <td
                                         colSpan={5}
@@ -96,7 +108,7 @@ export default function Index({ list, totalAdmin, totalPetugas }) {
                                     </td>
                                 </tr>
                             )}
-                            {list.map((p) => (
+                            {list.data.map((p) => (
                                 <tr key={p.id}>
                                     <td>{p.name}</td>
                                     <td>{p.username}</td>
@@ -144,6 +156,8 @@ export default function Index({ list, totalAdmin, totalPetugas }) {
                     </table>
                 </div>
             </div>
+
+            <Pagination links={list.links} />
         </AppLayout>
     );
 }

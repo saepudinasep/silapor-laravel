@@ -10,11 +10,17 @@ use Inertia\Response;
 
 class PetugasDashboardController extends Controller
 {
-    public function index(): Response
+    public function index(Request $request): Response
     {
-        $pengaduans = Pengaduan::with('pelapor')
-            ->latest('tgl_pengaduan')
-            ->get();
+        $status = $request->query('status', '');
+
+        $query = Pengaduan::with('pelapor')->latest('tgl_pengaduan');
+
+        if ($status !== '') {
+            $query->where('status', $status);
+        }
+
+        $pengaduans = $query->paginate(10)->withQueryString();
 
         return Inertia::render('Dashboard/Petugas', [
             'pengaduans' => $pengaduans,
@@ -22,6 +28,9 @@ class PetugasDashboardController extends Controller
                 'baru' => Pengaduan::status(Pengaduan::STATUS_BARU)->count(),
                 'proses' => Pengaduan::status(Pengaduan::STATUS_PROSES)->count(),
                 'selesai' => Pengaduan::status(Pengaduan::STATUS_SELESAI)->count(),
+            ],
+            'filters' => [
+                'status' => $status,
             ],
         ]);
     }

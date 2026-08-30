@@ -20,12 +20,13 @@ class PetugasController extends Controller
     {
         $list = User::whereIn('role', [User::ROLE_ADMIN, User::ROLE_PETUGAS])
             ->orderBy('name')
-            ->get(['id', 'name', 'username', 'telp', 'role']);
+            ->paginate(10)
+            ->withQueryString();
 
         return Inertia::render('Admin/Petugas/Index', [
             'list' => $list,
-            'totalAdmin' => $list->where('role', User::ROLE_ADMIN)->count(),
-            'totalPetugas' => $list->where('role', User::ROLE_PETUGAS)->count(),
+            'totalAdmin' => User::admin()->count(),
+            'totalPetugas' => User::petugas()->count(),
         ]);
     }
 
@@ -47,7 +48,7 @@ class PetugasController extends Controller
         User::create([
             'name' => $validated['name'],
             'username' => $validated['username'],
-            'email' => $validated['username'] . '@silapor.local',
+            'email' => $validated['username'] . '@gmail.com',
             'password' => Hash::make($validated['password']),
             'telp' => $validated['telp'] ?? null,
             'role' => $validated['role'],
@@ -80,8 +81,6 @@ class PetugasController extends Controller
             'role' => ['required', Rule::in([User::ROLE_ADMIN, User::ROLE_PETUGAS])],
         ]);
 
-        // Cegah demote admin terakhir jadi petugas — sistem harus selalu
-        // punya minimal 1 akun admin aktif.
         if (
             $user->role === User::ROLE_ADMIN
             && $validated['role'] !== User::ROLE_ADMIN
@@ -101,7 +100,6 @@ class PetugasController extends Controller
     {
         abort_unless(in_array($user->role, [User::ROLE_ADMIN, User::ROLE_PETUGAS], true), 404);
 
-        // Cegah hapus admin terakhir.
         if ($user->role === User::ROLE_ADMIN && User::admin()->count() <= 1) {
             return back()->with('error', 'Tidak bisa menghapus admin terakhir. Sistem harus selalu punya minimal 1 akun admin.');
         }
