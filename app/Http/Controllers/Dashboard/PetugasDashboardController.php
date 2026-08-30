@@ -18,6 +18,11 @@ class PetugasDashboardController extends Controller
 
         return Inertia::render('Dashboard/Petugas', [
             'pengaduans' => $pengaduans,
+            'summary' => [
+                'baru' => Pengaduan::status(Pengaduan::STATUS_BARU)->count(),
+                'proses' => Pengaduan::status(Pengaduan::STATUS_PROSES)->count(),
+                'selesai' => Pengaduan::status(Pengaduan::STATUS_SELESAI)->count(),
+            ],
         ]);
     }
 }

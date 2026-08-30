@@ -1,43 +1,45 @@
-import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import AppLayout from "@/Layouts/AppLayout";
 import { Head } from "@inertiajs/react";
 
 export default function Admin({ stats }) {
-    const cards = [
-        { label: "Total Masyarakat", value: stats.total_masyarakat },
-        { label: "Total Petugas", value: stats.total_petugas },
-        { label: "Total Pengaduan", value: stats.total_pengaduan },
-        { label: "Pengaduan Baru", value: stats.pengaduan_baru },
-    ];
-
     return (
-        <AuthenticatedLayout
-            header={
-                <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                    Dashboard Admin
-                </h2>
-            }
-        >
+        <AppLayout title="Dashboard" eyebrow="Ringkasan Sistem">
             <Head title="Dashboard Admin" />
 
-            <div className="py-12">
-                <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                        {cards.map((c) => (
-                            <div
-                                key={c.label}
-                                className="overflow-hidden bg-white p-6 shadow-sm sm:rounded-lg"
-                            >
-                                <p className="text-sm text-gray-500">
-                                    {c.label}
-                                </p>
-                                <p className="mt-2 text-3xl font-semibold text-gray-900">
-                                    {c.value}
-                                </p>
-                            </div>
-                        ))}
-                    </div>
+            <div className="stats-row">
+                <div className="stat-card">
+                    <div className="stat-val">{stats.total_masyarakat}</div>
+                    <div className="stat-label">Total Masyarakat</div>
+                </div>
+                <div className="stat-card">
+                    <div className="stat-val">{stats.total_petugas}</div>
+                    <div className="stat-label">Total Petugas</div>
+                </div>
+                <div className="stat-card teal">
+                    <div className="stat-val">{stats.total_pengaduan}</div>
+                    <div className="stat-label">Total Pengaduan</div>
+                </div>
+                <div className="stat-card amber">
+                    <div className="stat-val">{stats.pengaduan_baru}</div>
+                    <div className="stat-label">Pengaduan Baru</div>
                 </div>
             </div>
-        </AuthenticatedLayout>
+
+            <div className="card table-card">
+                <div className="card-header">
+                    <div className="card-title">Aktivitas</div>
+                </div>
+                <div
+                    style={{
+                        padding: 20,
+                        fontSize: 13.5,
+                        color: "var(--muted)",
+                    }}
+                >
+                    Data pengguna, laporan, dan pengelolaan petugas akan
+                    ditambahkan di sini.
+                </div>
+            </div>
+        </AppLayout>
     );
 }
