@@ -145,12 +145,12 @@ function navItemsForRole(role) {
                 label: "Utama",
                 items: [
                     {
-                        href: route("home"),
+                        href: route("home", undefined, false),
                         icon: "dashboard",
                         label: "Pengaduan Saya",
                     },
                     {
-                        href: route("pengaduan.create"),
+                        href: route("pengaduan.create", undefined, false),
                         icon: "plus",
                         label: "Buat Pengaduan",
                     },
@@ -160,7 +160,7 @@ function navItemsForRole(role) {
                 label: "Akun",
                 items: [
                     {
-                        href: route("profile.edit"),
+                        href: route("profile.edit", undefined, false),
                         icon: "settings",
                         label: "Pengaturan",
                     },
@@ -175,17 +175,17 @@ function navItemsForRole(role) {
                 label: "Utama",
                 items: [
                     {
-                        href: route("admin.dashboard"),
+                        href: route("admin.dashboard", undefined, false),
                         icon: "dashboard",
                         label: "Dashboard",
                     },
                     {
-                        href: route("admin.petugas.index"),
+                        href: route("admin.petugas.index", undefined, false),
                         icon: "users",
                         label: "Data Pengguna",
                     },
                     {
-                        href: route("laporan.index"),
+                        href: route("laporan.index", undefined, false),
                         icon: "report",
                         label: "Generate Laporan",
                     },
@@ -195,7 +195,7 @@ function navItemsForRole(role) {
                 label: "Akun",
                 items: [
                     {
-                        href: route("profile.edit"),
+                        href: route("profile.edit", undefined, false),
                         icon: "settings",
                         label: "Pengaturan",
                     },
@@ -210,12 +210,12 @@ function navItemsForRole(role) {
             label: "Utama",
             items: [
                 {
-                    href: route("petugas.dashboard"),
+                    href: route("petugas.dashboard", undefined, false),
                     icon: "dashboard",
                     label: "Dashboard",
                 },
                 {
-                    href: route("laporan.index"),
+                    href: route("laporan.index", undefined, false),
                     icon: "report",
                     label: "Generate Laporan",
                 },
@@ -225,7 +225,7 @@ function navItemsForRole(role) {
             label: "Akun",
             items: [
                 {
-                    href: route("profile.edit"),
+                    href: route("profile.edit", undefined, false),
                     icon: "settings",
                     label: "Pengaturan",
                 },
