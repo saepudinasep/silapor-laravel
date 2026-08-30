@@ -2,6 +2,8 @@ import { Head, Link, useForm } from "@inertiajs/react";
 import "../../../css/landing.css";
 
 export default function Register() {
+    const { flash } = usePage().props;
+
     const { data, setData, post, processing, errors, reset } = useForm({
         nik: "",
         nama: "",
@@ -9,6 +11,12 @@ export default function Register() {
         password: "",
         telp: "",
     });
+
+    useEffect(() => {
+        if (flash?.success) {
+            alertSuccess(flash.success);
+        }
+    }, [flash]);
 
     const submit = (e) => {
         e.preventDefault();

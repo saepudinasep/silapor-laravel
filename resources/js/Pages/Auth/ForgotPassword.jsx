@@ -2,12 +2,20 @@ import { Head, Link, useForm } from "@inertiajs/react";
 import "../../../css/landing.css";
 
 export default function ForgotPassword() {
+    const { flash } = usePage().props;
+
     const { data, setData, post, processing, errors, reset } = useForm({
         as_role: "masyarakat",
         identifier: "",
         password: "",
         password_confirmation: "",
     });
+
+    useEffect(() => {
+        if (flash?.success) {
+            alertSuccess(flash.success);
+        }
+    }, [flash]);
 
     function submit(e) {
         e.preventDefault();
