@@ -1,5 +1,6 @@
 import { Link, router, usePage } from "@inertiajs/react";
 import { useEffect, useState } from "react";
+import { alertError, alertSuccess, confirmAction } from "@/utils/swal";
 import "../../css/landing.css";
 
 const ICONS = {
@@ -234,7 +235,7 @@ function navItemsForRole(role) {
 }
 
 export default function AppLayout({ title, eyebrow, children }) {
-    const { auth, url, flash } = usePage().props;
+    const { auth, flash } = usePage().props;
     const currentPath = usePage().url;
     const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -242,14 +243,25 @@ export default function AppLayout({ title, eyebrow, children }) {
         setSidebarOpen(false);
     }, [currentPath]);
 
-    function handleLogout() {
-        if (
-            !window.confirm(
-                "Keluar dari akun? Anda perlu login kembali untuk mengakses SiLapor.",
-            )
-        ) {
-            return;
+    useEffect(() => {
+        if (flash?.success) {
+            alertSuccess(flash.success);
         }
+        if (flash?.error) {
+            alertError("Gagal", flash.error);
+        }
+    }, [flash]);
+
+    async function handleLogout() {
+        const confirmed = await confirmAction({
+            title: "Keluar dari akun?",
+            text: "Anda perlu login kembali untuk mengakses SiLapor.",
+            confirmText: "Ya, keluar",
+            icon: "question",
+        });
+
+        if (!confirmed) return;
+
         router.post(route("logout"));
     }
 
@@ -350,11 +362,6 @@ export default function AppLayout({ title, eyebrow, children }) {
                 </div>
 
                 <div className="content">
-                    {flash?.success && (
-                        <div className="mb-4 rounded-lg bg-green-100 px-4 py-3 text-sm text-green-800">
-                            {flash.success}
-                        </div>
-                    )}
                     {(eyebrow || title) && (
                         <div className="page-header">
                             {eyebrow && (

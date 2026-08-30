@@ -1,4 +1,5 @@
 import AppLayout from "@/Layouts/AppLayout";
+import { alertError } from "@/utils/swal";
 import { Head, router } from "@inertiajs/react";
 import { useState } from "react";
 
@@ -36,8 +37,9 @@ export default function Index({ pengaduans, filters }) {
 
     async function handleExportPDF() {
         if (pengaduans.length === 0) {
-            alert(
-                'Tidak ada data. Klik "Tampilkan" dahulu untuk memuat data sesuai filter.',
+            alertError(
+                "Tidak ada data",
+                'Klik "Tampilkan" dahulu untuk memuat data sesuai filter',
             );
             return;
         }
@@ -68,8 +70,9 @@ export default function Index({ pengaduans, filters }) {
 
     async function handleExportExcel() {
         if (pengaduans.length === 0) {
-            alert(
-                'Tidak ada data. Klik "Tampilkan" dahulu untuk memuat data sesuai filter.',
+            alertError(
+                "Tidak ada data",
+                'Klik "Tampilkan" dahulu untuk memuat data sesuai filter',
             );
             return;
         }

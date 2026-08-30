@@ -1,23 +1,35 @@
 import AppLayout from "@/Layouts/AppLayout";
+import { alertError, confirmAction, promptInput } from "@/utils/swal";
 import { Head, Link, router } from "@inertiajs/react";
 
 export default function Index({ list, totalAdmin, totalPetugas }) {
-    function handleDelete(id, nama) {
-        if (
-            !window.confirm(
-                `Akun "${nama}" akan dihapus permanen dan tidak bisa dikembalikan. Lanjutkan?`,
-            )
-        ) {
-            return;
-        }
+    async function handleDelete(id, nama) {
+        const confirmed = await confirmAction({
+            title: "Hapus akun ini?",
+            text: `Akun "${nama}" akan dihapus permanen dan tidak bisa dikembalikan.`,
+            confirmText: "Ya, hapus",
+            danger: true,
+        });
+
+        if (!confirmed) return;
+
         router.delete(route("admin.petugas.destroy", id));
     }
 
-    function handleResetPassword(id, nama) {
-        const newPassword = window.prompt(
-            `Password baru untuk ${nama} (minimal 6 karakter):`,
-        );
+    async function handleResetPassword(id, nama) {
+        const newPassword = await promptInput({
+            title: `Reset Password: ${nama}`,
+            inputLabel: "Password baru (minimal 6 karakter)",
+            inputType: "password",
+            confirmText: "Simpan",
+        });
+
         if (!newPassword) return;
+
+        if (newPassword.length < 6) {
+            alertError("Password terlalu pendek", "Minimal 6 karakter.");
+            return;
+        }
 
         router.put(route("admin.petugas.resetPassword", id), {
             password: newPassword,
