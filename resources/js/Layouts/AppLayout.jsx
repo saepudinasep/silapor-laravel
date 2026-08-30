@@ -183,7 +183,11 @@ function navItemsForRole(role) {
                         icon: "users",
                         label: "Data Pengguna",
                     },
-                    { href: "#", icon: "report", label: "Generate Laporan" },
+                    {
+                        href: route("laporan.index"),
+                        icon: "report",
+                        label: "Generate Laporan",
+                    },
                 ],
             },
             {

@@ -6,6 +6,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PengaduanController;
 use App\Http\Controllers\Petugas\PengaduanController as PetugasPengaduanController;
 use App\Http\Controllers\Admin\PetugasController as AdminPetugasController;
+use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\ProfileController;
 use App\Models\Pengaduan;
 use Illuminate\Foundation\Application;
@@ -97,3 +98,8 @@ Route::middleware(['auth', 'verified', 'role:admin'])
         Route::delete('/{user}', [AdminPetugasController::class, 'destroy'])->name('destroy');
         Route::put('/{user}/reset-password', [AdminPetugasController::class, 'resetPassword'])->name('resetPassword');
     });
+
+// pindah ke sini, group terpisah, TANPA prefix/name
+Route::middleware(['auth', 'verified', 'role:petugas,admin'])->group(function () {
+    Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
+});
