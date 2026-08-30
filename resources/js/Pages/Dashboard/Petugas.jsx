@@ -105,7 +105,10 @@ export default function Petugas({ pengaduans, summary }) {
                                         {/* TODO: ganti ke route('pengaduan.respond', p.id)
                                             begitu halaman tanggapan petugas sudah dibuat */}
                                         <a
-                                            href="#"
+                                            href={route(
+                                                "petugas.pengaduan.show",
+                                                p.id,
+                                            )}
                                             className="btn btn-small secondary"
                                         >
                                             Detail

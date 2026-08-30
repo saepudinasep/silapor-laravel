@@ -3,6 +3,8 @@
 use App\Http\Controllers\Dashboard\AdminDashboardController;
 use App\Http\Controllers\Dashboard\PetugasDashboardController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\PengaduanController;
+use App\Http\Controllers\Petugas\PengaduanController as PetugasPengaduanController;
 use App\Http\Controllers\ProfileController;
 use App\Models\Pengaduan;
 use Illuminate\Foundation\Application;
@@ -63,4 +65,21 @@ Route::middleware(['auth', 'verified', 'role:petugas'])
     ->name('petugas.')
     ->group(function () {
         Route::get('/', [PetugasDashboardController::class, 'index'])->name('dashboard');
+    });
+
+Route::middleware(['auth', 'verified', 'role:masyarakat'])->group(function () {
+    Route::get('/home', [HomeController::class, 'index'])->name('home');
+
+    Route::get('/pengaduan/create', [PengaduanController::class, 'create'])->name('pengaduan.create');
+    Route::post('/pengaduan', [PengaduanController::class, 'store'])->name('pengaduan.store');
+    Route::get('/pengaduan/{pengaduan}', [PengaduanController::class, 'show'])->name('pengaduan.show');
+});
+
+Route::middleware(['auth', 'verified', 'role:petugas,admin'])
+    ->prefix('petugas/pengaduan')
+    ->name('petugas.pengaduan.')
+    ->group(function () {
+        Route::get('/{pengaduan}', [PetugasPengaduanController::class, 'show'])->name('show');
+        Route::put('/{pengaduan}/status', [PetugasPengaduanController::class, 'updateStatus'])->name('updateStatus');
+        Route::post('/{pengaduan}/tanggapan', [PetugasPengaduanController::class, 'storeTanggapan'])->name('tanggapan.store');
     });

@@ -154,7 +154,11 @@ function navItemsForRole(role) {
                         icon: "dashboard",
                         label: "Pengaduan Saya",
                     },
-                    { href: "#", icon: "plus", label: "Buat Pengaduan" },
+                    {
+                        href: route("pengaduan.create"),
+                        icon: "plus",
+                        label: "Buat Pengaduan",
+                    },
                 ],
             },
             {
@@ -206,7 +210,7 @@ function navItemsForRole(role) {
 }
 
 export default function AppLayout({ title, eyebrow, children }) {
-    const { auth, url } = usePage().props;
+    const { auth, url, flash } = usePage().props;
     const currentPath = usePage().url;
     const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -322,6 +326,11 @@ export default function AppLayout({ title, eyebrow, children }) {
                 </div>
 
                 <div className="content">
+                    {flash?.success && (
+                        <div className="mb-4 rounded-lg bg-green-100 px-4 py-3 text-sm text-green-800">
+                            {flash.success}
+                        </div>
+                    )}
                     {(eyebrow || title) && (
                         <div className="page-header">
                             {eyebrow && (

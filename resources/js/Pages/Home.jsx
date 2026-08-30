@@ -39,7 +39,7 @@ export default function Home({ pengaduans }) {
             {pengaduans.map((p) => (
                 <Link
                     key={p.id}
-                    // href={route("pengaduan.show", p.id)}
+                    href={route("pengaduan.show", p.id)}
                     style={{ display: "block" }}
                 >
                     <div className="card" style={{ cursor: "pointer" }}>
@@ -77,10 +77,7 @@ export default function Home({ pengaduans }) {
                 </Link>
             ))}
 
-            <Link
-                // href={route("pengaduan.create")}
-                className="fab"
-            >
+            <Link href={route("pengaduan.create")} className="fab">
                 <svg
                     width="16"
                     height="16"
