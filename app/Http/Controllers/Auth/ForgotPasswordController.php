@@ -30,13 +30,19 @@ class ForgotPasswordController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+        $asMasyarakat = $request->input('as_role') === 'masyarakat';
+
         $validated = $request->validate([
             'as_role' => ['required', Rule::in(['masyarakat', 'petugas'])],
-            'identifier' => ['required', 'string'],
+            'identifier' => $asMasyarakat
+                ? ['required', 'string', 'regex:/^[0-9]{16}$/']
+                : ['required', 'string'],
             'password' => ['required', 'string', 'min:6', 'confirmed'],
+        ], [
+            'identifier.regex' => 'NIK harus berupa 16 digit angka.',
         ]);
 
-        $user = $validated['as_role'] === 'masyarakat'
+        $user = $asMasyarakat
             ? User::where('role', User::ROLE_MASYARAKAT)
             ->where('nik', $validated['identifier'])
             ->first()
@@ -46,7 +52,7 @@ class ForgotPasswordController extends Controller
 
         if (! $user) {
             throw ValidationException::withMessages([
-                'identifier' => $validated['as_role'] === 'masyarakat'
+                'identifier' => $asMasyarakat
                     ? 'NIK tidak ditemukan.'
                     : 'Username tidak ditemukan.',
             ]);

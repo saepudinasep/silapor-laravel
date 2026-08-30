@@ -32,18 +32,25 @@ class RegisteredUserController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
-            'nik' => ['required', 'string', 'size:16', 'unique:' . User::class],
+            'nik' => [
+                'required',
+                'string',
+                'regex:/^[0-9]{16}$/',
+                'unique:' . User::class,
+            ],
             'nama' => ['required', 'string', 'max:255'],
             'username' => ['required', 'string', 'max:255', 'unique:' . User::class],
             'password' => ['required', 'string', Rules\Password::defaults()],
             'telp' => ['nullable', 'string', 'max:20'],
+        ], [
+            'nik.regex' => 'NIK harus berupa 16 digit angka.',
         ]);
 
         $user = User::create([
             'nik' => $request->nik,
             'name' => $request->nama,
             'username' => $request->username,
-            'email' => $request->username . '@silapor.local',
+            'email' => $request->username . '@gmail.com',
             'password' => Hash::make($request->password),
             'telp' => $request->telp,
             'role' => User::ROLE_MASYARAKAT,
