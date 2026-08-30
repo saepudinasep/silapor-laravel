@@ -321,7 +321,7 @@ export default function AppLayout({ title, eyebrow, children }) {
                             <Link
                                 key={item.label}
                                 href={item.href}
-                                className={`nav-item${currentPath === item.href ? " active" : ""}`}
+                                className={`nav-item${currentPath.split("?")[0] === item.href ? " active" : ""}`}
                                 onClick={() => setSidebarOpen(false)}
                             >
                                 {ICONS[item.icon]}
