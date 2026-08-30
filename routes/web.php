@@ -5,6 +5,7 @@ use App\Http\Controllers\Dashboard\PetugasDashboardController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PengaduanController;
 use App\Http\Controllers\Petugas\PengaduanController as PetugasPengaduanController;
+use App\Http\Controllers\Admin\PetugasController as AdminPetugasController;
 use App\Http\Controllers\ProfileController;
 use App\Models\Pengaduan;
 use Illuminate\Foundation\Application;
@@ -82,4 +83,17 @@ Route::middleware(['auth', 'verified', 'role:petugas,admin'])
         Route::get('/{pengaduan}', [PetugasPengaduanController::class, 'show'])->name('show');
         Route::put('/{pengaduan}/status', [PetugasPengaduanController::class, 'updateStatus'])->name('updateStatus');
         Route::post('/{pengaduan}/tanggapan', [PetugasPengaduanController::class, 'storeTanggapan'])->name('tanggapan.store');
+    });
+
+Route::middleware(['auth', 'verified', 'role:admin'])
+    ->prefix('admin/petugas')
+    ->name('admin.petugas.')
+    ->group(function () {
+        Route::get('/', [AdminPetugasController::class, 'index'])->name('index');
+        Route::get('/baru', [AdminPetugasController::class, 'create'])->name('create');
+        Route::post('/', [AdminPetugasController::class, 'store'])->name('store');
+        Route::get('/{user}/edit', [AdminPetugasController::class, 'edit'])->name('edit');
+        Route::put('/{user}', [AdminPetugasController::class, 'update'])->name('update');
+        Route::delete('/{user}', [AdminPetugasController::class, 'destroy'])->name('destroy');
+        Route::put('/{user}/reset-password', [AdminPetugasController::class, 'resetPassword'])->name('resetPassword');
     });

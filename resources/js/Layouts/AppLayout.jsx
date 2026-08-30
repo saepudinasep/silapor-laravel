@@ -178,7 +178,11 @@ function navItemsForRole(role) {
                         icon: "dashboard",
                         label: "Dashboard",
                     },
-                    { href: "#", icon: "users", label: "Data Pengguna" },
+                    {
+                        href: route("admin.petugas.index"),
+                        icon: "users",
+                        label: "Data Pengguna",
+                    },
                     { href: "#", icon: "report", label: "Generate Laporan" },
                 ],
             },
