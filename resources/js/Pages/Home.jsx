@@ -1,15 +1,41 @@
 import AppLayout from "@/Layouts/AppLayout";
 import Pagination from "@/Components/Pagination";
-import { Head, Link } from "@inertiajs/react";
+import { Head, Link, router } from "@inertiajs/react";
 
 function formatDate(iso) {
     return new Date(iso).toLocaleDateString("id-ID");
 }
 
-export default function Home({ pengaduans }) {
+const STATUS_TABS = [
+    { key: "", label: "Semua" },
+    { key: "baru", label: "Baru" },
+    { key: "proses", label: "Proses" },
+    { key: "selesai", label: "Selesai" },
+];
+
+export default function Home({ pengaduans, filters }) {
+    function handleFilter(status) {
+        router.get(route("home"), status ? { status } : {}, {
+            preserveState: true,
+            replace: true,
+        });
+    }
+
     return (
         <AppLayout title="Pengaduan Saya" eyebrow="Masyarakat">
             <Head title="Pengaduan Saya" />
+
+            <div className="filter-bar">
+                {STATUS_TABS.map((tab) => (
+                    <button
+                        key={tab.key}
+                        className={filters.status === tab.key ? "active" : ""}
+                        onClick={() => handleFilter(tab.key)}
+                    >
+                        {tab.label}
+                    </button>
+                ))}
+            </div>
 
             {pengaduans.data.length === 0 && (
                 <div className="card empty-state">
@@ -29,10 +55,15 @@ export default function Home({ pengaduans }) {
                             />
                         </svg>
                     </div>
-                    <div className="title">Belum Ada Pengaduan</div>
+                    <div className="title">
+                        {filters.status
+                            ? "Tidak Ada Pengaduan"
+                            : "Belum Ada Pengaduan"}
+                    </div>
                     <div style={{ fontSize: 13.5 }}>
-                        Klik tombol "Laporan Baru" untuk membuat laporan pertama
-                        Anda.
+                        {filters.status
+                            ? `Tidak ada laporan dengan status "${filters.status}".`
+                            : 'Klik tombol "Laporan Baru" untuk membuat laporan pertama Anda.'}
                     </div>
                 </div>
             )}

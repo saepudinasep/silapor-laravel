@@ -10,14 +10,21 @@ class HomeController extends Controller
 {
     public function index(Request $request): Response
     {
-        $pengaduans = $request->user()
-            ->pengaduans()
-            ->latest('tgl_pengaduan')
-            ->paginate(2)
-            ->withQueryString();
+        $status = $request->query('status', '');
+
+        $query = $request->user()->pengaduans()->latest('tgl_pengaduan');
+
+        if ($status !== '') {
+            $query->where('status', $status);
+        }
+
+        $pengaduans = $query->paginate(10)->withQueryString();
 
         return Inertia::render('Home', [
             'pengaduans' => $pengaduans,
+            'filters' => [
+                'status' => $status,
+            ],
         ]);
     }
 }
