@@ -1,17 +1,25 @@
-import { Head, Link, useForm } from "@inertiajs/react";
+import { alertSuccess } from "@/utils/swal";
+import { Head, Link, useForm, usePage } from "@inertiajs/react";
+import { useEffect } from "react";
 import "../../../css/landing.css";
-import Checkbox from "@/Components/Checkbox";
 
 export default function Login({ status, canResetPassword }) {
+    const { flash } = usePage().props;
+
     const { data, setData, post, processing, errors, reset } = useForm({
         username: "",
         password: "",
         remember: false,
     });
 
+    useEffect(() => {
+        if (flash?.success) {
+            alertSuccess(flash.success);
+        }
+    }, [flash]);
+
     const submit = (e) => {
         e.preventDefault();
-
         post(route("login"), {
             onFinish: () => reset("password"),
         });
@@ -19,7 +27,7 @@ export default function Login({ status, canResetPassword }) {
 
     return (
         <div className="auth-shell">
-            <Head title="Log In" />
+            <Head title="Log in" />
             <div className="hero-bg"></div>
 
             <div className="auth-card">
@@ -111,20 +119,25 @@ export default function Login({ status, canResetPassword }) {
                         )}
                     </div>
 
-                    <div className="mt-4 mb-4 block">
-                        <label className="flex items-center">
-                            <Checkbox
-                                name="remember"
-                                checked={data.remember}
-                                onChange={(e) =>
-                                    setData("remember", e.target.checked)
-                                }
-                            />
-                            <span className="ms-2 text-sm text-gray-400">
-                                Ingat Saya
-                            </span>
-                        </label>
-                    </div>
+                    <label
+                        style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 8,
+                            fontSize: 13.5,
+                            marginBottom: 16,
+                        }}
+                    >
+                        <input
+                            type="checkbox"
+                            name="remember"
+                            checked={data.remember}
+                            onChange={(e) =>
+                                setData("remember", e.target.checked)
+                            }
+                        />
+                        Ingat saya
+                    </label>
 
                     <button className="btn" disabled={processing}>
                         {processing ? "Memproses..." : "Masuk"}
