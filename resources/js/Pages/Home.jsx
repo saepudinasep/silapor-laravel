@@ -1,4 +1,5 @@
 import AppLayout from "@/Layouts/AppLayout";
+import Pagination from "@/Components/Pagination";
 import { Head, Link } from "@inertiajs/react";
 
 function formatDate(iso) {
@@ -10,7 +11,7 @@ export default function Home({ pengaduans }) {
         <AppLayout title="Pengaduan Saya" eyebrow="Masyarakat">
             <Head title="Pengaduan Saya" />
 
-            {pengaduans.length === 0 && (
+            {pengaduans.data.length === 0 && (
                 <div className="card empty-state">
                     <div className="icon">
                         <svg
@@ -36,7 +37,7 @@ export default function Home({ pengaduans }) {
                 </div>
             )}
 
-            {pengaduans.map((p) => (
+            {pengaduans.data.map((p) => (
                 <Link
                     key={p.id}
                     href={route("pengaduan.show", p.id)}
@@ -76,6 +77,10 @@ export default function Home({ pengaduans }) {
                     </div>
                 </Link>
             ))}
+
+            {pengaduans.data.length > 0 && (
+                <Pagination links={pengaduans.links} />
+            )}
 
             <Link href={route("pengaduan.create")} className="fab">
                 <svg

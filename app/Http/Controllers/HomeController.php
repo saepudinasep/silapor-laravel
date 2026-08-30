@@ -10,13 +10,14 @@ class HomeController extends Controller
 {
     public function index(Request $request): Response
     {
-        $pengaduan = $request->user()
+        $pengaduans = $request->user()
             ->pengaduans()
             ->latest('tgl_pengaduan')
-            ->get();
+            ->paginate(10)
+            ->withQueryString();
 
         return Inertia::render('Home', [
-            'pengaduans' => $pengaduan,
+            'pengaduans' => $pengaduans,
         ]);
     }
 }
