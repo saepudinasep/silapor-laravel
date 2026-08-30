@@ -35,7 +35,10 @@ Route::middleware('guest')->group(function () {
     // Route::post('reset-password', [NewPasswordController::class, 'store'])
     //     ->name('password.store');
     Route::get('forgot-password', [ForgotPasswordController::class, 'create'])->name('password.request');
-    Route::post('forgot-password', [ForgotPasswordController::class, 'store'])->name('password.email');
+
+    Route::post('forgot-password', [ForgotPasswordController::class, 'store'])
+        ->middleware('throttle:6,1')
+        ->name('password.email');
 });
 
 Route::middleware('auth')->group(function () {
