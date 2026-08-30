@@ -80,6 +80,16 @@ class PetugasController extends Controller
             'role' => ['required', Rule::in([User::ROLE_ADMIN, User::ROLE_PETUGAS])],
         ]);
 
+        // Cegah demote admin terakhir jadi petugas — sistem harus selalu
+        // punya minimal 1 akun admin aktif.
+        if (
+            $user->role === User::ROLE_ADMIN
+            && $validated['role'] !== User::ROLE_ADMIN
+            && User::admin()->count() <= 1
+        ) {
+            return back()->with('error', 'Tidak bisa mengubah role admin terakhir. Pastikan ada admin lain sebelum menurunkan role akun ini.');
+        }
+
         $user->update($validated);
 
         return redirect()
@@ -90,6 +100,11 @@ class PetugasController extends Controller
     public function destroy(User $user): RedirectResponse
     {
         abort_unless(in_array($user->role, [User::ROLE_ADMIN, User::ROLE_PETUGAS], true), 404);
+
+        // Cegah hapus admin terakhir.
+        if ($user->role === User::ROLE_ADMIN && User::admin()->count() <= 1) {
+            return back()->with('error', 'Tidak bisa menghapus admin terakhir. Sistem harus selalu punya minimal 1 akun admin.');
+        }
 
         $nama = $user->name;
         $user->delete();

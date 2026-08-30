@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\User;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -43,6 +44,12 @@ class ProfileController extends Controller
         ]);
 
         $user = $request->user();
+
+        // Cegah admin terakhir menghapus akunnya sendiri — sistem harus
+        // selalu punya minimal 1 akun admin aktif.
+        if ($user->role === User::ROLE_ADMIN && User::admin()->count() <= 1) {
+            return back()->with('error', 'Akun ini adalah admin terakhir dan tidak bisa dihapus. Tambahkan admin lain terlebih dahulu.');
+        }
 
         Auth::logout();
 
