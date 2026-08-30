@@ -13,7 +13,7 @@ class HomeController extends Controller
         $pengaduans = $request->user()
             ->pengaduans()
             ->latest('tgl_pengaduan')
-            ->paginate(10)
+            ->paginate(2)
             ->withQueryString();
 
         return Inertia::render('Home', [

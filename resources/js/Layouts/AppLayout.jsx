@@ -138,6 +138,13 @@ const ICONS = {
     ),
 };
 
+/**
+ * `match` berisi pola nama route (bukan path) yang bikin item ini
+ * ke-highlight aktif — dicek lewat Ziggy `route().current(pattern)`,
+ * yang support wildcard "*". Ini dipakai supaya halaman yang "senasab"
+ * secara route name (misal detail pengaduan) ikut nge-highlight menu
+ * induknya walau path URL-nya nggak share prefix sama sekali.
+ */
 function navItemsForRole(role) {
     if (role === "masyarakat") {
         return [
@@ -146,11 +153,13 @@ function navItemsForRole(role) {
                 items: [
                     {
                         href: route("home", undefined, false),
+                        match: ["home", "pengaduan.show"],
                         icon: "dashboard",
                         label: "Pengaduan Saya",
                     },
                     {
                         href: route("pengaduan.create", undefined, false),
+                        match: ["pengaduan.create"],
                         icon: "plus",
                         label: "Buat Pengaduan",
                     },
@@ -161,6 +170,7 @@ function navItemsForRole(role) {
                 items: [
                     {
                         href: route("profile.edit", undefined, false),
+                        match: ["profile.edit"],
                         icon: "settings",
                         label: "Pengaturan",
                     },
@@ -176,16 +186,19 @@ function navItemsForRole(role) {
                 items: [
                     {
                         href: route("admin.dashboard", undefined, false),
+                        match: ["admin.dashboard"],
                         icon: "dashboard",
                         label: "Dashboard",
                     },
                     {
                         href: route("admin.petugas.index", undefined, false),
+                        match: ["admin.petugas.*"],
                         icon: "users",
                         label: "Data Pengguna",
                     },
                     {
                         href: route("laporan.index", undefined, false),
+                        match: ["laporan.index"],
                         icon: "report",
                         label: "Generate Laporan",
                     },
@@ -196,6 +209,7 @@ function navItemsForRole(role) {
                 items: [
                     {
                         href: route("profile.edit", undefined, false),
+                        match: ["profile.edit"],
                         icon: "settings",
                         label: "Pengaturan",
                     },
@@ -211,11 +225,13 @@ function navItemsForRole(role) {
             items: [
                 {
                     href: route("petugas.dashboard", undefined, false),
+                    match: ["petugas.dashboard", "petugas.pengaduan.show"],
                     icon: "dashboard",
                     label: "Dashboard",
                 },
                 {
                     href: route("laporan.index", undefined, false),
+                    match: ["laporan.index"],
                     icon: "report",
                     label: "Generate Laporan",
                 },
@@ -226,6 +242,7 @@ function navItemsForRole(role) {
             items: [
                 {
                     href: route("profile.edit", undefined, false),
+                    match: ["profile.edit"],
                     icon: "settings",
                     label: "Pengaturan",
                 },
@@ -234,14 +251,19 @@ function navItemsForRole(role) {
     ];
 }
 
+/** True kalau nama route saat ini cocok salah satu pola di `patterns`. */
+function isActive(patterns) {
+    return patterns.some((pattern) => route().current(pattern));
+}
+
 export default function AppLayout({ title, eyebrow, children }) {
     const { auth, flash } = usePage().props;
-    const currentPath = usePage().url;
+    const currentUrl = usePage().url;
     const [sidebarOpen, setSidebarOpen] = useState(false);
 
     useEffect(() => {
         setSidebarOpen(false);
-    }, [currentPath]);
+    }, [currentUrl]);
 
     useEffect(() => {
         if (flash?.success) {
@@ -321,7 +343,7 @@ export default function AppLayout({ title, eyebrow, children }) {
                             <Link
                                 key={item.label}
                                 href={item.href}
-                                className={`nav-item${currentPath.split("?")[0] === item.href ? " active" : ""}`}
+                                className={`nav-item${isActive(item.match) ? " active" : ""}`}
                                 onClick={() => setSidebarOpen(false)}
                             >
                                 {ICONS[item.icon]}
