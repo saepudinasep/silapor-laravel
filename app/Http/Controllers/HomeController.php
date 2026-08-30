@@ -16,7 +16,7 @@ class HomeController extends Controller
             ->get();
 
         return Inertia::render('Home', [
-            'pengaduan' => $pengaduan,
+            'pengaduans' => $pengaduan,
         ]);
     }
 }

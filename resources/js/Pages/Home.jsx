@@ -66,7 +66,7 @@ export default function Home({ pengaduans }) {
                         pengaduans.map((p) => (
                             <Link
                                 key={p.id}
-                                href={route("pengaduan.show", p.id)}
+                                // href={route("pengaduan.show", p.id)}
                                 className="block rounded-lg bg-white p-5 shadow-sm transition hover:shadow-md"
                             >
                                 <div className="flex flex-wrap items-center justify-between gap-2">
@@ -93,7 +93,7 @@ export default function Home({ pengaduans }) {
 
                 {/* Tombol mengambang, mirip FAB di project lama */}
                 <Link
-                    href={route("pengaduan.create")}
+                    // href={route("pengaduan.create")}
                     className="fixed bottom-8 right-8 inline-flex items-center gap-2 rounded-full bg-gray-900 px-5 py-3 text-sm font-semibold text-white shadow-lg transition hover:bg-gray-700"
                 >
                     <svg

@@ -1,10 +1,6 @@
-import Checkbox from "@/Components/Checkbox";
-import InputError from "@/Components/InputError";
-import InputLabel from "@/Components/InputLabel";
-import PrimaryButton from "@/Components/PrimaryButton";
-import TextInput from "@/Components/TextInput";
-import GuestLayout from "@/Layouts/GuestLayout";
 import { Head, Link, useForm } from "@inertiajs/react";
+import "../../../css/landing.css";
+import Checkbox from "@/Components/Checkbox";
 
 export default function Login({ status, canResetPassword }) {
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -22,79 +18,132 @@ export default function Login({ status, canResetPassword }) {
     };
 
     return (
-        <GuestLayout>
-            <Head title="Log in" />
+        <div className="auth-shell">
+            <Head title="Log In" />
+            <div className="hero-bg"></div>
 
-            {status && (
-                <div className="mb-4 text-sm font-medium text-green-600">
-                    {status}
-                </div>
-            )}
-
-            <form onSubmit={submit}>
-                <div>
-                    <InputLabel htmlFor="username" value="Username" />
-
-                    <TextInput
-                        id="username"
-                        type="text"
-                        name="username"
-                        value={data.username}
-                        className="mt-1 block w-full"
-                        autoComplete="username"
-                        isFocused={true}
-                        onChange={(e) => setData("username", e.target.value)}
-                    />
-
-                    <InputError message={errors.username} className="mt-2" />
-                </div>
-
-                <div className="mt-4">
-                    <InputLabel htmlFor="password" value="Password" />
-
-                    <TextInput
-                        id="password"
-                        type="password"
-                        name="password"
-                        value={data.password}
-                        className="mt-1 block w-full"
-                        autoComplete="current-password"
-                        onChange={(e) => setData("password", e.target.value)}
-                    />
-
-                    <InputError message={errors.password} className="mt-2" />
-                </div>
-
-                <div className="mt-4 block">
-                    <label className="flex items-center">
-                        <Checkbox
-                            name="remember"
-                            checked={data.remember}
-                            onChange={(e) =>
-                                setData("remember", e.target.checked)
-                            }
-                        />
-                        <span className="ms-2 text-sm text-gray-600">
-                            Remember me
-                        </span>
-                    </label>
-                </div>
-
-                <div className="mt-4 flex items-center justify-end">
-                    {canResetPassword && (
-                        <Link
-                            href={route("password.request")}
-                            className="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+            <div className="auth-card">
+                <div className="auth-logo">
+                    <div className="auth-logo-icon">
+                        <svg
+                            width="20"
+                            height="20"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            strokeWidth="2.5"
                         >
-                            Forgot your password?
-                        </Link>
-                    )}
-
-                    <PrimaryButton className="ms-4" disabled={processing}>
-                        Log in
-                    </PrimaryButton>
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"
+                            />
+                        </svg>
+                    </div>
+                    <div>
+                        <div className="auth-logo-text">SiLapor</div>
+                        <div className="auth-logo-sub">
+                            Pengaduan Masyarakat
+                        </div>
+                    </div>
                 </div>
-            </form>
-        </GuestLayout>
+
+                <h1>Masuk</h1>
+                <p className="subtitle">
+                    Login untuk membuat laporan, atau mengelola & menanggapi
+                    pengaduan (petugas/admin)
+                </p>
+
+                {status && (
+                    <div
+                        className="mb-4 text-sm font-medium"
+                        style={{ color: "var(--teal)" }}
+                    >
+                        {status}
+                    </div>
+                )}
+
+                <form onSubmit={submit}>
+                    <div className="form-group">
+                        <label htmlFor="username">Username</label>
+                        <input
+                            id="username"
+                            type="text"
+                            name="username"
+                            value={data.username}
+                            autoComplete="username"
+                            autoFocus
+                            onChange={(e) =>
+                                setData("username", e.target.value)
+                            }
+                            required
+                        />
+                        {errors.username && (
+                            <div
+                                className="mt-1 text-sm"
+                                style={{ color: "#ef4444" }}
+                            >
+                                {errors.username}
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="form-group">
+                        <label htmlFor="password">Password</label>
+                        <input
+                            id="password"
+                            type="password"
+                            name="password"
+                            value={data.password}
+                            autoComplete="current-password"
+                            onChange={(e) =>
+                                setData("password", e.target.value)
+                            }
+                            required
+                        />
+                        {errors.password && (
+                            <div
+                                className="mt-1 text-sm"
+                                style={{ color: "#ef4444" }}
+                            >
+                                {errors.password}
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="mt-4 mb-4 block">
+                        <label className="flex items-center">
+                            <Checkbox
+                                name="remember"
+                                checked={data.remember}
+                                onChange={(e) =>
+                                    setData("remember", e.target.checked)
+                                }
+                            />
+                            <span className="ms-2 text-sm text-gray-400">
+                                Ingat Saya
+                            </span>
+                        </label>
+                    </div>
+
+                    <button className="btn" disabled={processing}>
+                        {processing ? "Memproses..." : "Masuk"}
+                    </button>
+                </form>
+
+                <div className="switch-link">
+                    Belum punya akun?{" "}
+                    <Link href={route("register")}>Daftar di sini</Link>
+                    {canResetPassword && (
+                        <>
+                            <br />
+                            <Link href={route("password.request")}>
+                                Lupa password?
+                            </Link>
+                        </>
+                    )}
+                </div>
+            </div>
+        </div>
     );
 }
