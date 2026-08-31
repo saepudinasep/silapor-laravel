@@ -1,11 +1,16 @@
 import AppLayout from "@/Layouts/AppLayout";
 import Chat from "@/Components/Chat";
 import { Head, router } from "@inertiajs/react";
+import { useState } from "react";
 
 export default function PengaduanShow({ pengaduan }) {
+    const [status, setStatus] = useState(pengaduan.status);
+
     function handleStatusChange(e) {
+        const newStatus = e.target.value;
+        setStatus(newStatus); // optimistic, biar dropdown langsung kerasa responsif
         router.put(route("petugas.pengaduan.updateStatus", pengaduan.id), {
-            status: e.target.value,
+            status: newStatus,
         });
     }
 
@@ -23,9 +28,9 @@ export default function PengaduanShow({ pengaduan }) {
                         gap: 8,
                     }}
                 >
-                    <span className={`badge ${pengaduan.status}`}>
+                    <span className={`badge ${status}`}>
                         <span className="badge-dot"></span>
-                        {pengaduan.status}
+                        {status}
                     </span>
                     <span style={{ fontSize: 12, color: "var(--muted)" }}>
                         {new Date(pengaduan.tgl_pengaduan).toLocaleString(
@@ -69,7 +74,7 @@ export default function PengaduanShow({ pengaduan }) {
                     <select
                         id="status"
                         className="form-select"
-                        value={pengaduan.status}
+                        value={status}
                         onChange={handleStatusChange}
                     >
                         <option value="baru">baru</option>
@@ -83,6 +88,7 @@ export default function PengaduanShow({ pengaduan }) {
                 pengaduanId={pengaduan.id}
                 initialMessages={pengaduan.pesans}
                 sendUrl={route("pesan.store", pengaduan.id)}
+                onStatusChange={setStatus}
             />
         </AppLayout>
     );

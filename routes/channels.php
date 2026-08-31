@@ -19,3 +19,8 @@ Broadcast::channel('pengaduan.{pengaduanId}', function (User $user, int $pengadu
     // Masyarakat cuma boleh akses chat pengaduan miliknya sendiri.
     return $pengaduan->user_id === $user->id;
 });
+
+
+Broadcast::channel('petugas-notifikasi', function (User $user) {
+    return in_array($user->role, [User::ROLE_PETUGAS, User::ROLE_ADMIN], true);
+});

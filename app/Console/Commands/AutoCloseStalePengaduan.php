@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Events\StatusPengaduanDiubah;
 use App\Models\Pengaduan;
 use App\Models\User;
 use Illuminate\Console\Command;
@@ -43,6 +44,7 @@ class AutoCloseStalePengaduan extends Command
 
                     if ($lastFromPetugas && $isStale) {
                         $pengaduan->update(['status' => Pengaduan::STATUS_SELESAI]);
+                        broadcast(new StatusPengaduanDiubah($pengaduan));
                         $closed++;
                     }
                 }

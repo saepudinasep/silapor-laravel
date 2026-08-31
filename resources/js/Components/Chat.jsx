@@ -1,7 +1,12 @@
 import { router, usePage } from "@inertiajs/react";
 import { useEffect, useRef, useState } from "react";
 
-export default function Chat({ pengaduanId, initialMessages, sendUrl }) {
+export default function Chat({
+    pengaduanId,
+    initialMessages,
+    sendUrl,
+    onStatusChange,
+}) {
     const { auth } = usePage().props;
     const [messages, setMessages] = useState(initialMessages);
     const [text, setText] = useState("");
@@ -11,13 +16,14 @@ export default function Chat({ pengaduanId, initialMessages, sendUrl }) {
     useEffect(() => {
         const channel = window.Echo.private(`pengaduan.${pengaduanId}`);
 
-        // Nama event pakai titik di depan (".pesan.baru") supaya Echo
-        // nggak nambahin namespace App\Events\... otomatis di depannya
-        // — broadcastAs() di backend udah kasih nama pendek "pesan.baru".
         channel.listen(".pesan.baru", (e) => {
             setMessages((prev) =>
                 prev.some((m) => m.id === e.id) ? prev : [...prev, e],
             );
+        });
+
+        channel.listen(".status.diubah", (e) => {
+            onStatusChange?.(e.status);
         });
 
         return () => {

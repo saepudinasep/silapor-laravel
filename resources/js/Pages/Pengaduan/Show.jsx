@@ -1,8 +1,11 @@
 import AppLayout from "@/Layouts/AppLayout";
 import Chat from "@/Components/Chat";
 import { Head } from "@inertiajs/react";
+import { useState } from "react";
 
 export default function Show({ pengaduan }) {
+    const [status, setStatus] = useState(pengaduan.status);
+
     return (
         <AppLayout title="Detail Pengaduan" eyebrow="Masyarakat">
             <Head title="Detail Pengaduan" />
@@ -17,9 +20,9 @@ export default function Show({ pengaduan }) {
                         gap: 8,
                     }}
                 >
-                    <span className={`badge ${pengaduan.status}`}>
+                    <span className={`badge ${status}`}>
                         <span className="badge-dot"></span>
-                        {pengaduan.status}
+                        {status}
                     </span>
                     <span style={{ fontSize: 12, color: "var(--muted)" }}>
                         {new Date(pengaduan.tgl_pengaduan).toLocaleString(
@@ -45,6 +48,7 @@ export default function Show({ pengaduan }) {
                 pengaduanId={pengaduan.id}
                 initialMessages={pengaduan.pesans}
                 sendUrl={route("pesan.store", pengaduan.id)}
+                onStatusChange={setStatus}
             />
         </AppLayout>
     );

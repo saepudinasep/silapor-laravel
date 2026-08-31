@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\NotifikasiDiperbarui;
 use App\Models\Pengaduan;
+use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -40,6 +42,12 @@ class PengaduanController extends Controller
             'status' => Pengaduan::STATUS_BARU,
         ]);
 
+        // Ping lonceng notifikasi semua petugas/admin, biar langsung
+        // kelihatan tanpa nunggu polling.
+        broadcast(new NotifikasiDiperbarui([
+            new PrivateChannel('petugas-notifikasi'),
+        ]));
+
         return redirect()
             ->route('home')
             ->with('success', 'Pengaduan terkirim, akan segera ditinjau petugas.');
@@ -50,7 +58,7 @@ class PengaduanController extends Controller
      */
     public function show(Request $request, Pengaduan $pengaduan): Response
     {
-        abort_unless($pengaduan->user_id === $request->user()->id, 403);
+        abort_unless($pengaduan->user_id === $request->user()?->id, 403);
 
         $pengaduan->load(['pesans.pengirim']);
 

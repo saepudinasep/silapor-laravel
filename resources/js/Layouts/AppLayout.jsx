@@ -287,7 +287,7 @@ function dashboardHrefForRole(role) {
     return route("home", undefined, false);
 }
 
-function NotificationBell({ notifications, role }) {
+function NotificationBell({ notifications, role, userId }) {
     const [open, setOpen] = useState(false);
     const wrapperRef = useRef(null);
 
@@ -302,15 +302,37 @@ function NotificationBell({ notifications, role }) {
             document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
-    // Polling ringan — cek notifikasi baru tiap 20 detik tanpa reload halaman.
+    function refreshNotifications() {
+        router.reload({
+            only: ["notifications"],
+            preserveScroll: true,
+            preserveState: true,
+        });
+    }
+
+    // Real-time utama: subscribe channel sesuai role, ping langsung
+    // trigger refresh notifikasi begitu ada event masuk.
     useEffect(() => {
-        const interval = setInterval(() => {
-            router.reload({
-                only: ["notifications"],
-                preserveScroll: true,
-                preserveState: true,
-            });
-        }, 20000);
+        if (!role || !userId) return;
+
+        const channelName =
+            role === "masyarakat"
+                ? `App.Models.User.${userId}`
+                : "petugas-notifikasi";
+        const channel = window.Echo.private(channelName);
+
+        channel.listen(".notifikasi.diperbarui", refreshNotifications);
+
+        return () => {
+            window.Echo.leave(channelName);
+        };
+    }, [role, userId]);
+
+    // Fallback — jaga-jaga kalau koneksi WebSocket sempat putus/reconnect
+    // dan ada event yang kelewat. Interval diperpanjang jadi 60 detik
+    // karena sekarang cuma jadi jaring pengaman, bukan sumber utama lagi.
+    useEffect(() => {
+        const interval = setInterval(refreshNotifications, 60000);
         return () => clearInterval(interval);
     }, []);
 
@@ -604,6 +626,7 @@ export default function AppLayout({ title, eyebrow, children }) {
                         <NotificationBell
                             notifications={notifications}
                             role={role}
+                            userId={user?.id}
                         />
                         <button className="topbar-btn" onClick={handleLogout}>
                             {ICONS.logout}{" "}

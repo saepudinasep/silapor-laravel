@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Petugas;
 
+use App\Events\StatusPengaduanDiubah;
 use App\Http\Controllers\Controller;
 use App\Models\Pengaduan;
 use Illuminate\Http\RedirectResponse;
@@ -33,6 +34,8 @@ class PengaduanController extends Controller
         ]);
 
         $pengaduan->update(['status' => $request->status]);
+
+        broadcast(new StatusPengaduanDiubah($pengaduan));
 
         return back()->with('success', "Status diperbarui: {$request->status}");
     }
