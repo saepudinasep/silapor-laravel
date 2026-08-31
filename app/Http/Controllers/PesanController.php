@@ -27,6 +27,16 @@ class PesanController extends Controller
             'isi_pesan' => $request->isi_pesan,
         ]);
 
+        if ($user->role === User::ROLE_MASYARAKAT) {
+            if ($pengaduan->status === Pengaduan::STATUS_SELESAI) {
+                $pengaduan->update(['status' => Pengaduan::STATUS_PROSES]);
+            }
+        } else {
+            if ($pengaduan->status === Pengaduan::STATUS_BARU) {
+                $pengaduan->update(['status' => Pengaduan::STATUS_PROSES]);
+            }
+        }
+
         broadcast(new PesanDikirim($pesan));
 
         return back();
