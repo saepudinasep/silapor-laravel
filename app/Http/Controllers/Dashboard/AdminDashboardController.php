@@ -13,6 +13,11 @@ class AdminDashboardController extends Controller
 {
     public function index(): Response
     {
+        $recentPengaduan = Pengaduan::with('pelapor')
+            ->latest('tgl_pengaduan')
+            ->take(8)
+            ->get();
+
         return Inertia::render('Dashboard/Admin', [
             'stats' => [
                 'total_masyarakat' => User::masyarakat()->count(),
@@ -20,6 +25,7 @@ class AdminDashboardController extends Controller
                 'total_pengaduan' => Pengaduan::count(),
                 'pengaduan_baru' => Pengaduan::status(Pengaduan::STATUS_BARU)->count(),
             ],
+            'recentPengaduan' => $recentPengaduan,
         ]);
     }
 }
