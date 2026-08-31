@@ -1,4 +1,5 @@
 import AppLayout from "@/Layouts/AppLayout";
+import Chat from "@/Components/Chat";
 import { Head } from "@inertiajs/react";
 
 export default function Show({ pengaduan }) {
@@ -40,27 +41,11 @@ export default function Show({ pengaduan }) {
                 )}
             </div>
 
-            <div className="card" style={{ maxWidth: 640 }}>
-                <div className="card-header">
-                    <div className="card-title">Tanggapan</div>
-                </div>
-
-                {pengaduan.tanggapans.length === 0 && (
-                    <p style={{ fontSize: 13, color: "var(--muted)" }}>
-                        Belum ada tanggapan dari petugas.
-                    </p>
-                )}
-
-                {pengaduan.tanggapans.map((t) => (
-                    <div key={t.id} className="tanggapan-item">
-                        <div>{t.tanggapan}</div>
-                        <div className="meta">
-                            {t.petugas?.name ?? "Petugas"} ·{" "}
-                            {new Date(t.tgl_tanggapan).toLocaleString("id-ID")}
-                        </div>
-                    </div>
-                ))}
-            </div>
+            <Chat
+                pengaduanId={pengaduan.id}
+                initialMessages={pengaduan.pesans}
+                sendUrl={route("pesan.store", pengaduan.id)}
+            />
         </AppLayout>
     );
 }

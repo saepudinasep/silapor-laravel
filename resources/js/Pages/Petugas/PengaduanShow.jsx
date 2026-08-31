@@ -1,18 +1,8 @@
 import AppLayout from "@/Layouts/AppLayout";
-import { Head, router, useForm } from "@inertiajs/react";
+import Chat from "@/Components/Chat";
+import { Head, router } from "@inertiajs/react";
 
 export default function PengaduanShow({ pengaduan }) {
-    const { data, setData, post, processing, reset } = useForm({
-        tanggapan: "",
-    });
-
-    function submitTanggapan(e) {
-        e.preventDefault();
-        post(route("petugas.pengaduan.tanggapan.store", pengaduan.id), {
-            onSuccess: () => reset("tanggapan"),
-        });
-    }
-
     function handleStatusChange(e) {
         router.put(route("petugas.pengaduan.updateStatus", pengaduan.id), {
             status: e.target.value,
@@ -89,45 +79,11 @@ export default function PengaduanShow({ pengaduan }) {
                 </div>
             </div>
 
-            <div className="card" style={{ maxWidth: 640 }}>
-                <div className="card-header">
-                    <div className="card-title">Tanggapan</div>
-                </div>
-
-                {pengaduan.tanggapans.length === 0 && (
-                    <p style={{ fontSize: 13, color: "var(--muted)" }}>
-                        Belum ada tanggapan dari petugas.
-                    </p>
-                )}
-
-                {pengaduan.tanggapans.map((t) => (
-                    <div key={t.id} className="tanggapan-item">
-                        <div>{t.tanggapan}</div>
-                        <div className="meta">
-                            {t.petugas?.name ?? "Petugas"} ·{" "}
-                            {new Date(t.tgl_tanggapan).toLocaleString("id-ID")}
-                        </div>
-                    </div>
-                ))}
-
-                <form onSubmit={submitTanggapan} style={{ marginTop: 18 }}>
-                    <div className="form-group">
-                        <label htmlFor="tanggapan">Tulis Tanggapan</label>
-                        <textarea
-                            id="tanggapan"
-                            rows={3}
-                            value={data.tanggapan}
-                            onChange={(e) =>
-                                setData("tanggapan", e.target.value)
-                            }
-                            required
-                        />
-                    </div>
-                    <button className="btn" disabled={processing}>
-                        {processing ? "Mengirim..." : "Kirim Tanggapan"}
-                    </button>
-                </form>
-            </div>
+            <Chat
+                pengaduanId={pengaduan.id}
+                initialMessages={pengaduan.pesans}
+                sendUrl={route("pesan.store", pengaduan.id)}
+            />
         </AppLayout>
     );
 }

@@ -59,8 +59,14 @@ class User extends Authenticatable
         ];
     }
 
+    /*
+    |--------------------------------------------------------------------
+    | Relasi
+    |--------------------------------------------------------------------
+    */
+
     /**
-     * Pengaduan yang dibuat user ini (kalau role = masyarakat)
+     * Pengaduan yang dibuat user ini (kalau role = masyarakat).
      */
     public function pengaduans(): HasMany
     {
@@ -68,16 +74,19 @@ class User extends Authenticatable
     }
 
     /**
-     * Tanggapan yang dibuat user ini (kalau role = petugas/admin)
+     * Semua pesan chat yang PERNAH dikirim user ini — baik sebagai
+     * masyarakat (pelapor) maupun sebagai petugas/admin yang menanggapi.
      */
-    public function tanggapans(): HasMany
+    public function pesans(): HasMany
     {
-        return $this->hasMany(Tanggapan::class, 'petugas_id');
+        return $this->hasMany(Pesan::class, 'user_id');
     }
 
-    /**
-     * Scope
-     */
+    /*
+    |--------------------------------------------------------------------
+    | Scope
+    |--------------------------------------------------------------------
+    */
 
     public function scopeMasyarakat($query)
     {
@@ -94,9 +103,11 @@ class User extends Authenticatable
         return $query->where('role', self::ROLE_ADMIN);
     }
 
-    /**
-     * Helper role
-     */
+    /*
+    |--------------------------------------------------------------------
+    | Helper role
+    |--------------------------------------------------------------------
+    */
 
     public function isAdmin(): bool
     {

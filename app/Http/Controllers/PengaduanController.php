@@ -48,11 +48,11 @@ class PengaduanController extends Controller
     /**
      * Detail 1 pengaduan, khusus untuk pemilik laporan.
      */
-    public function show(Pengaduan $pengaduan, Request $request): Response
+    public function show(Request $request, Pengaduan $pengaduan): Response
     {
-        abort_unless($pengaduan->user_id === $request->user()?->id, 403);
+        abort_unless($pengaduan->user_id === $request->user()->id, 403);
 
-        $pengaduan->load(['tanggapans.petugas']);
+        $pengaduan->load(['pesans.pengirim']);
 
         return Inertia::render('Pengaduan/Show', [
             'pengaduan' => $pengaduan,

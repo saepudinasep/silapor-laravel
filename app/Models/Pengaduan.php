@@ -35,12 +35,14 @@ class Pengaduan extends Model
         ];
     }
 
-    /**
-     * Relasi
-     */
+    /*
+    |--------------------------------------------------------------------
+    | Relasi
+    |--------------------------------------------------------------------
+    */
 
     /**
-     * Pelapor (user dengan role masyarakat)
+     * Pelapor (user dengan role masyarakat).
      */
     public function pelapor(): BelongsTo
     {
@@ -48,16 +50,20 @@ class Pengaduan extends Model
     }
 
     /**
-     * Semua tanggapan untuk pengaduan ini
+     * Chat/percakapan terkait pengaduan ini — bisa dari masyarakat
+     * (pelapor) maupun petugas/admin yang menangani.
      */
-    public function tanggapans(): HasMany
+    public function pesans(): HasMany
     {
-        return $this->hasMany(Tanggapan::class, 'pengaduan_id');
+        return $this->hasMany(Pesan::class, 'pengaduan_id')->orderBy('created_at');
     }
 
-    /**
-     * Scope
-     */
+    /*
+    |--------------------------------------------------------------------
+    | Scope
+    |--------------------------------------------------------------------
+    */
+
     public function scopeStatus($query, string $status)
     {
         return $query->where('status', $status);

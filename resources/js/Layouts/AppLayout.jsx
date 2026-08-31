@@ -1,5 +1,5 @@
 import { Link, router, usePage } from "@inertiajs/react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { alertError, alertSuccess, confirmAction } from "@/utils/swal";
 import "../../css/landing.css";
 
@@ -136,14 +136,28 @@ const ICONS = {
             />
         </svg>
     ),
+    bell: (
+        <svg
+            width="18"
+            height="18"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth="2"
+        >
+            <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.311 6.022c1.733.64 3.56 1.085 5.454 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0"
+            />
+        </svg>
+    ),
 };
 
 /**
  * `match` berisi pola nama route (bukan path) yang bikin item ini
  * ke-highlight aktif — dicek lewat Ziggy `route().current(pattern)`,
- * yang support wildcard "*". Ini dipakai supaya halaman yang "senasab"
- * secara route name (misal detail pengaduan) ikut nge-highlight menu
- * induknya walau path URL-nya nggak share prefix sama sekali.
+ * yang support wildcard "*".
  */
 function navItemsForRole(role) {
     if (role === "masyarakat") {
@@ -256,8 +270,205 @@ function isActive(patterns) {
     return patterns.some((pattern) => route().current(pattern));
 }
 
+function timeAgo(iso) {
+    const diffMs = Date.now() - new Date(iso).getTime();
+    const mins = Math.floor(diffMs / 60000);
+    if (mins < 1) return "Baru saja";
+    if (mins < 60) return `${mins} menit lalu`;
+    const hours = Math.floor(mins / 60);
+    if (hours < 24) return `${hours} jam lalu`;
+    return new Date(iso).toLocaleDateString("id-ID");
+}
+
+function NotificationBell({ notifications }) {
+    const [open, setOpen] = useState(false);
+    const wrapperRef = useRef(null);
+
+    // Tutup dropdown kalau klik di luar area lonceng.
+    useEffect(() => {
+        function handleClickOutside(e) {
+            if (wrapperRef.current && !wrapperRef.current.contains(e.target)) {
+                setOpen(false);
+            }
+        }
+        document.addEventListener("mousedown", handleClickOutside);
+        return () =>
+            document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
+
+    // Polling ringan — cek pengaduan baru tiap 20 detik tanpa reload halaman.
+    useEffect(() => {
+        const interval = setInterval(() => {
+            router.reload({
+                only: ["notifications"],
+                preserveScroll: true,
+                preserveState: true,
+            });
+        }, 20000);
+        return () => clearInterval(interval);
+    }, []);
+
+    if (!notifications) return null;
+
+    const { count, latest } = notifications;
+
+    return (
+        <div ref={wrapperRef} style={{ position: "relative" }}>
+            <button
+                className="topbar-btn"
+                onClick={() => setOpen((v) => !v)}
+                style={{ position: "relative" }}
+                aria-label="Notifikasi pengaduan baru"
+            >
+                {ICONS.bell}
+                {count > 0 && (
+                    <span
+                        style={{
+                            position: "absolute",
+                            top: -4,
+                            right: -4,
+                            background: "var(--rose)",
+                            color: "#fff",
+                            fontSize: 10,
+                            fontWeight: 700,
+                            minWidth: 16,
+                            height: 16,
+                            borderRadius: 999,
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            padding: "0 3px",
+                        }}
+                    >
+                        {count > 9 ? "9+" : count}
+                    </span>
+                )}
+            </button>
+
+            {open && (
+                <div
+                    style={{
+                        position: "absolute",
+                        top: "calc(100% + 8px)",
+                        right: 0,
+                        width: 320,
+                        maxWidth: "90vw",
+                        background: "var(--navy-card)",
+                        border: "1px solid var(--border)",
+                        borderRadius: 12,
+                        boxShadow: "0 12px 32px rgba(0,0,0,0.35)",
+                        zIndex: 50,
+                        overflow: "hidden",
+                    }}
+                >
+                    <div
+                        style={{
+                            padding: "12px 16px",
+                            borderBottom: "1px solid var(--border)",
+                            fontSize: 13,
+                            fontWeight: 700,
+                            color: "var(--text)",
+                        }}
+                    >
+                        Pengaduan Baru {count > 0 && `(${count})`}
+                    </div>
+
+                    {latest.length === 0 && (
+                        <div
+                            style={{
+                                padding: 20,
+                                fontSize: 12.5,
+                                color: "var(--muted)",
+                                textAlign: "center",
+                            }}
+                        >
+                            Tidak ada pengaduan baru.
+                        </div>
+                    )}
+
+                    {latest.map((n) => (
+                        <Link
+                            key={n.id}
+                            href={route("petugas.pengaduan.show", n.id)}
+                            onClick={() => setOpen(false)}
+                            style={{
+                                display: "block",
+                                padding: "12px 16px",
+                                borderBottom: "1px solid var(--border)",
+                                textDecoration: "none",
+                            }}
+                        >
+                            <div
+                                style={{
+                                    display: "flex",
+                                    justifyContent: "space-between",
+                                    gap: 8,
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        fontSize: 12.5,
+                                        fontWeight: 600,
+                                        color: "var(--text)",
+                                    }}
+                                >
+                                    {n.pelapor}
+                                </span>
+                                <span
+                                    style={{
+                                        fontSize: 11,
+                                        color: "var(--muted)",
+                                        whiteSpace: "nowrap",
+                                    }}
+                                >
+                                    {timeAgo(n.tgl_pengaduan)}
+                                </span>
+                            </div>
+                            <div
+                                style={{
+                                    fontSize: 12,
+                                    color: "var(--muted)",
+                                    marginTop: 4,
+                                    overflow: "hidden",
+                                    textOverflow: "ellipsis",
+                                    whiteSpace: "nowrap",
+                                }}
+                            >
+                                {n.isi_laporan}
+                            </div>
+                        </Link>
+                    ))}
+
+                    {count > 0 && (
+                        <Link
+                            href={route(
+                                route().current("admin.dashboard")
+                                    ? "admin.dashboard"
+                                    : "petugas.dashboard",
+                                undefined,
+                                false,
+                            )}
+                            onClick={() => setOpen(false)}
+                            style={{
+                                display: "block",
+                                textAlign: "center",
+                                padding: "10px 16px",
+                                fontSize: 12.5,
+                                color: "var(--teal)",
+                                fontWeight: 600,
+                            }}
+                        >
+                            Lihat semua
+                        </Link>
+                    )}
+                </div>
+            )}
+        </div>
+    );
+}
+
 export default function AppLayout({ title, eyebrow, children }) {
-    const { auth, flash } = usePage().props;
+    const { auth, flash, notifications } = usePage().props;
     const currentUrl = usePage().url;
     const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -377,10 +588,20 @@ export default function AppLayout({ title, eyebrow, children }) {
                     </button>
                     <span className="topbar-title">{title}</span>
                     <div className="topbar-spacer"></div>
-                    <button className="topbar-btn" onClick={handleLogout}>
-                        {ICONS.logout}{" "}
-                        <span className="topbar-btn-label">Keluar</span>
-                    </button>
+
+                    <div
+                        style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 8,
+                        }}
+                    >
+                        <NotificationBell notifications={notifications} />
+                        <button className="topbar-btn" onClick={handleLogout}>
+                            {ICONS.logout}{" "}
+                            <span className="topbar-btn-label">Keluar</span>
+                        </button>
+                    </div>
                 </div>
 
                 <div className="content">

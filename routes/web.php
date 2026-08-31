@@ -7,6 +7,7 @@ use App\Http\Controllers\PengaduanController;
 use App\Http\Controllers\Petugas\PengaduanController as PetugasPengaduanController;
 use App\Http\Controllers\Admin\PetugasController as AdminPetugasController;
 use App\Http\Controllers\LaporanController;
+use App\Http\Controllers\PesanController;
 use App\Http\Controllers\ProfileController;
 use App\Models\Pengaduan;
 use App\Models\User;
@@ -92,7 +93,7 @@ Route::middleware(['auth', 'verified', 'role:petugas,admin'])
     ->group(function () {
         Route::get('/{pengaduan}', [PetugasPengaduanController::class, 'show'])->name('show');
         Route::put('/{pengaduan}/status', [PetugasPengaduanController::class, 'updateStatus'])->name('updateStatus');
-        Route::post('/{pengaduan}/tanggapan', [PetugasPengaduanController::class, 'storeTanggapan'])->name('tanggapan.store');
+        // Route::post('/{pengaduan}/tanggapan', [PetugasPengaduanController::class, 'storeTanggapan'])->name('tanggapan.store');
     });
 
 Route::middleware(['auth', 'verified', 'role:admin'])
@@ -112,3 +113,7 @@ Route::middleware(['auth', 'verified', 'role:admin'])
 Route::middleware(['auth', 'verified', 'role:petugas,admin'])->group(function () {
     Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
 });
+
+Route::middleware(['auth', 'verified'])
+    ->post('/pengaduan/{pengaduan}/pesan', [PesanController::class, 'store'])
+    ->name('pesan.store');

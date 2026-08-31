@@ -16,7 +16,7 @@ class PengaduanController extends Controller
      */
     public function show(Pengaduan $pengaduan): Response
     {
-        $pengaduan->load(['pelapor', 'tanggapans.petugas']);
+        $pengaduan->load(['pelapor', 'pesans.pengirim']);
 
         return Inertia::render('Petugas/PengaduanShow', [
             'pengaduan' => $pengaduan,

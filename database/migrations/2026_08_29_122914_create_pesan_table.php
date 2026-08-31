@@ -11,21 +11,24 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tanggapan', function (Blueprint $table) {
+        Schema::create('pesan', function (Blueprint $table) {
             $table->id();
 
             $table->foreignId('pengaduan_id')
                 ->constrained('pengaduan')
                 ->onDelete('cascade');
 
-            // Petugas yang menanggapi: user dengan role 'petugas' atau 'admin
-            $table->foreignId('petugas_id')
+            // Pengirim pesan — bisa masyarakat (pelapor) ATAU petugas/admin,
+            // dua-duanya sama-sama nunjuk ke tabel users.
+            $table->foreignId('user_id')
                 ->constrained('users')
                 ->onDelete('cascade');
 
-            $table->dateTime('tgl_tanggapan');
-            $table->text('tanggapan');
+            $table->text('isi_pesan');
+
             $table->timestamps();
+
+            $table->index('pengaduan_id');
         });
     }
 
@@ -34,6 +37,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('tanggapan');
+        Schema::dropIfExists('pesan');
     }
 };
