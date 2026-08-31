@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Models\Pengaduan;
+use App\Models\Pesan;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -48,25 +49,57 @@ class HandleInertiaRequests extends Middleware
 
     private function notificationsFor(?User $user): ?array
     {
-        if (! $user || ! in_array($user->role, [User::ROLE_PETUGAS, User::ROLE_ADMIN], true)) {
+        if (! $user) {
             return null;
         }
 
-        $latest = Pengaduan::with('pelapor')
-            ->where('status', Pengaduan::STATUS_BARU)
-            ->latest('tgl_pengaduan')
-            ->take(5)
-            ->get()
-            ->map(fn(Pengaduan $p) => [
-                'id' => $p->id,
-                'pelapor' => $p->pelapor?->name ?? 'Warga',
-                'isi_laporan' => $p->isi_laporan,
-                'tgl_pengaduan' => $p->tgl_pengaduan,
-            ]);
+        if ($user->role === User::ROLE_MASYARAKAT) {
+            $baseQuery = Pesan::whereHas(
+                'pengaduan',
+                fn($q) => $q->where('user_id', $user->id)
+            )->where('user_id', '!=', $user->id);
 
-        return [
-            'count' => Pengaduan::where('status', Pengaduan::STATUS_BARU)->count(),
-            'latest' => $latest,
-        ];
+            $latest = (clone $baseQuery)
+                ->with('pengirim')
+                ->latest()
+                ->take(5)
+                ->get()
+                ->map(fn(Pesan $p) => [
+                    'id' => $p->id,
+                    'judul' => $p->pengirim->name,
+                    'isi' => $p->isi_pesan,
+                    'waktu' => $p->created_at,
+                    'url' => route('pengaduan.show', $p->pengaduan_id, false),
+                ]);
+
+            return [
+                'count' => $baseQuery->count(),
+                'latest' => $latest,
+            ];
+        }
+
+        if (in_array($user->role, [User::ROLE_PETUGAS, User::ROLE_ADMIN], true)) {
+            $baseQuery = Pengaduan::where('status', Pengaduan::STATUS_BARU);
+
+            $latest = (clone $baseQuery)
+                ->with('pelapor')
+                ->latest('tgl_pengaduan')
+                ->take(5)
+                ->get()
+                ->map(fn(Pengaduan $p) => [
+                    'id' => $p->id,
+                    'judul' => $p->pelapor?->name ?? 'Warga',
+                    'isi' => $p->isi_laporan,
+                    'waktu' => $p->tgl_pengaduan,
+                    'url' => route('petugas.pengaduan.show', $p->id, false),
+                ]);
+
+            return [
+                'count' => $baseQuery->count(),
+                'latest' => $latest,
+            ];
+        }
+
+        return null;
     }
 }

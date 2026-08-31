@@ -280,11 +280,17 @@ function timeAgo(iso) {
     return new Date(iso).toLocaleDateString("id-ID");
 }
 
-function NotificationBell({ notifications }) {
+/** Ke mana tombol "Lihat semua" ngarah, sesuai role. */
+function dashboardHrefForRole(role) {
+    if (role === "admin") return route("admin.dashboard", undefined, false);
+    if (role === "petugas") return route("petugas.dashboard", undefined, false);
+    return route("home", undefined, false);
+}
+
+function NotificationBell({ notifications, role }) {
     const [open, setOpen] = useState(false);
     const wrapperRef = useRef(null);
 
-    // Tutup dropdown kalau klik di luar area lonceng.
     useEffect(() => {
         function handleClickOutside(e) {
             if (wrapperRef.current && !wrapperRef.current.contains(e.target)) {
@@ -296,7 +302,7 @@ function NotificationBell({ notifications }) {
             document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
-    // Polling ringan — cek pengaduan baru tiap 20 detik tanpa reload halaman.
+    // Polling ringan — cek notifikasi baru tiap 20 detik tanpa reload halaman.
     useEffect(() => {
         const interval = setInterval(() => {
             router.reload({
@@ -311,6 +317,11 @@ function NotificationBell({ notifications }) {
     if (!notifications) return null;
 
     const { count, latest } = notifications;
+    const title = role === "masyarakat" ? "Balasan Petugas" : "Pengaduan Baru";
+    const emptyText =
+        role === "masyarakat"
+            ? "Belum ada balasan baru."
+            : "Tidak ada pengaduan baru.";
 
     return (
         <div ref={wrapperRef} style={{ position: "relative" }}>
@@ -318,7 +329,7 @@ function NotificationBell({ notifications }) {
                 className="topbar-btn"
                 onClick={() => setOpen((v) => !v)}
                 style={{ position: "relative" }}
-                aria-label="Notifikasi pengaduan baru"
+                aria-label="Notifikasi"
             >
                 {ICONS.bell}
                 {count > 0 && (
@@ -370,7 +381,7 @@ function NotificationBell({ notifications }) {
                             color: "var(--text)",
                         }}
                     >
-                        Pengaduan Baru {count > 0 && `(${count})`}
+                        {title} {count > 0 && `(${count})`}
                     </div>
 
                     {latest.length === 0 && (
@@ -382,14 +393,14 @@ function NotificationBell({ notifications }) {
                                 textAlign: "center",
                             }}
                         >
-                            Tidak ada pengaduan baru.
+                            {emptyText}
                         </div>
                     )}
 
                     {latest.map((n) => (
                         <Link
                             key={n.id}
-                            href={route("petugas.pengaduan.show", n.id)}
+                            href={n.url}
                             onClick={() => setOpen(false)}
                             style={{
                                 display: "block",
@@ -412,7 +423,7 @@ function NotificationBell({ notifications }) {
                                         color: "var(--text)",
                                     }}
                                 >
-                                    {n.pelapor}
+                                    {n.judul}
                                 </span>
                                 <span
                                     style={{
@@ -421,7 +432,7 @@ function NotificationBell({ notifications }) {
                                         whiteSpace: "nowrap",
                                     }}
                                 >
-                                    {timeAgo(n.tgl_pengaduan)}
+                                    {timeAgo(n.waktu)}
                                 </span>
                             </div>
                             <div
@@ -434,20 +445,14 @@ function NotificationBell({ notifications }) {
                                     whiteSpace: "nowrap",
                                 }}
                             >
-                                {n.isi_laporan}
+                                {n.isi}
                             </div>
                         </Link>
                     ))}
 
                     {count > 0 && (
                         <Link
-                            href={route(
-                                route().current("admin.dashboard")
-                                    ? "admin.dashboard"
-                                    : "petugas.dashboard",
-                                undefined,
-                                false,
-                            )}
+                            href={dashboardHrefForRole(role)}
                             onClick={() => setOpen(false)}
                             style={{
                                 display: "block",
@@ -596,7 +601,10 @@ export default function AppLayout({ title, eyebrow, children }) {
                             gap: 8,
                         }}
                     >
-                        <NotificationBell notifications={notifications} />
+                        <NotificationBell
+                            notifications={notifications}
+                            role={role}
+                        />
                         <button className="topbar-btn" onClick={handleLogout}>
                             {ICONS.logout}{" "}
                             <span className="topbar-btn-label">Keluar</span>
