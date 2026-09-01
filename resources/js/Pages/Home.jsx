@@ -13,7 +13,7 @@ const STATUS_TABS = [
     { key: "selesai", label: "Selesai" },
 ];
 
-export default function Home({ pengaduans, filters }) {
+function Home({ pengaduans, filters }) {
     function handleFilter(status) {
         router.get(route("home"), status ? { status } : {}, {
             preserveState: true,
@@ -22,7 +22,7 @@ export default function Home({ pengaduans, filters }) {
     }
 
     return (
-        <AppLayout title="Pengaduan Saya" eyebrow="Masyarakat">
+        <>
             <Head title="Pengaduan Saya" />
 
             <div className="filter-bar">
@@ -130,6 +130,14 @@ export default function Home({ pengaduans, filters }) {
                 </svg>
                 Laporan Baru
             </Link>
-        </AppLayout>
+        </>
     );
 }
+
+Home.layout = (page) => (
+    <AppLayout title="Pengaduan Saya" eyebrow="Masyarakat">
+        {page}
+    </AppLayout>
+);
+
+export default Home;

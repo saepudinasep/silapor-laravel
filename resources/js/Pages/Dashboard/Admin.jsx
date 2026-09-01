@@ -1,9 +1,9 @@
 import AppLayout from "@/Layouts/AppLayout";
 import { Head, Link } from "@inertiajs/react";
 
-export default function Admin({ stats, recentPengaduan }) {
+function Admin({ stats, recentPengaduan }) {
     return (
-        <AppLayout title="Dashboard" eyebrow="Ringkasan Sistem">
+        <>
             <Head title="Dashboard Admin" />
 
             <div className="stats-row">
@@ -112,6 +112,14 @@ export default function Admin({ stats, recentPengaduan }) {
                     </table>
                 </div>
             </div>
-        </AppLayout>
+        </>
     );
 }
+
+Admin.layout = (page) => (
+    <AppLayout title="Dashboard" eyebrow="Ringkasan Sistem">
+        {page}
+    </AppLayout>
+);
+
+export default Admin;

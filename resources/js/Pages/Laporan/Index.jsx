@@ -3,7 +3,7 @@ import { alertError } from "@/utils/swal";
 import { Head, router } from "@inertiajs/react";
 import { useState } from "react";
 
-export default function Index({ pengaduans, filters }) {
+function Index({ pengaduans, filters }) {
     const [startDate, setStartDate] = useState(filters.start_date);
     const [endDate, setEndDate] = useState(filters.end_date);
     const [status, setStatus] = useState(filters.status);
@@ -101,7 +101,7 @@ export default function Index({ pengaduans, filters }) {
     }
 
     return (
-        <AppLayout title="Generate Laporan" eyebrow="Rekap & Ekspor">
+        <>
             <Head title="Generate Laporan" />
 
             <div className="card" style={{ maxWidth: 720 }}>
@@ -274,6 +274,14 @@ export default function Index({ pengaduans, filters }) {
                     </table>
                 </div>
             </div>
-        </AppLayout>
+        </>
     );
 }
+
+Index.layout = (page) => (
+    <AppLayout title="Generate Laporan" eyebrow="Rekap & Ekspor">
+        {page}
+    </AppLayout>
+);
+
+export default Index;

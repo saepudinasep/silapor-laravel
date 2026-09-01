@@ -9,7 +9,7 @@ const STATUS_TABS = [
     { key: "selesai", label: "Selesai" },
 ];
 
-export default function Petugas({ pengaduans, summary, filters }) {
+function Petugas({ pengaduans, summary, filters }) {
     function handleFilter(status) {
         router.get(route("petugas.dashboard"), status ? { status } : {}, {
             preserveState: true,
@@ -18,7 +18,7 @@ export default function Petugas({ pengaduans, summary, filters }) {
     }
 
     return (
-        <AppLayout title="Dashboard" eyebrow="Ringkasan Pengaduan">
+        <>
             <Head title="Dashboard Petugas" />
 
             <div className="stats-row">
@@ -132,6 +132,14 @@ export default function Petugas({ pengaduans, summary, filters }) {
             </div>
 
             <Pagination links={pengaduans.links} />
-        </AppLayout>
+        </>
     );
 }
+
+Petugas.layout = (page) => (
+    <AppLayout title="Dashboard" eyebrow="Ringkasan Pengaduan">
+        {page}
+    </AppLayout>
+);
+
+export default Petugas;

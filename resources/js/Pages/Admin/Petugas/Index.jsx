@@ -3,7 +3,7 @@ import Pagination from "@/Components/Pagination";
 import { alertError, confirmAction, promptInput } from "@/utils/swal";
 import { Head, Link, router } from "@inertiajs/react";
 
-export default function Index({ list, totalAdmin, totalPetugas }) {
+function Index({ list, totalAdmin, totalPetugas }) {
     async function handleDelete(id, nama) {
         const confirmed = await confirmAction({
             title: "Hapus akun ini?",
@@ -38,7 +38,7 @@ export default function Index({ list, totalAdmin, totalPetugas }) {
     }
 
     return (
-        <AppLayout title="Manajemen Pengguna" eyebrow="Administrator">
+        <>
             <Head title="Manajemen Pengguna" />
 
             <div className="stats-row cols-2">
@@ -158,6 +158,14 @@ export default function Index({ list, totalAdmin, totalPetugas }) {
             </div>
 
             <Pagination links={list.links} />
-        </AppLayout>
+        </>
     );
 }
+
+Index.layout = (page) => (
+    <AppLayout title="Manajemen Pengguna" eyebrow="Administrator">
+        {page}
+    </AppLayout>
+);
+
+export default Index;

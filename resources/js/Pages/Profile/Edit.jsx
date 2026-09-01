@@ -312,14 +312,22 @@ function DeleteAccountCard() {
     );
 }
 
-export default function Edit() {
+function Edit() {
     return (
-        <AppLayout title="Pengaturan Akun" eyebrow="Akun Saya">
+        <>
             <Head title="Pengaturan Akun" />
 
             <ProfileInfoCard />
             <UpdatePasswordCard />
             <DeleteAccountCard />
-        </AppLayout>
+        </>
     );
 }
+
+Edit.layout = (page) => (
+    <AppLayout title="Pengaturan Akun" eyebrow="Akun Saya">
+        {page}
+    </AppLayout>
+);
+
+export default Edit;

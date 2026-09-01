@@ -1,7 +1,7 @@
 import AppLayout from "@/Layouts/AppLayout";
 import { Head, Link, useForm } from "@inertiajs/react";
 
-export default function Edit({ petugas }) {
+function Edit({ petugas }) {
     const { data, setData, put, processing, errors } = useForm({
         name: petugas.name,
         telp: petugas.telp ?? "",
@@ -14,7 +14,7 @@ export default function Edit({ petugas }) {
     }
 
     return (
-        <AppLayout title="Edit Petugas" eyebrow="Administrator">
+        <>
             <Head title="Edit Petugas" />
 
             <div className="card" style={{ maxWidth: 480 }}>
@@ -91,6 +91,14 @@ export default function Edit({ petugas }) {
                     </div>
                 </form>
             </div>
-        </AppLayout>
+        </>
     );
 }
+
+Edit.layout = (page) => (
+    <AppLayout title="Edit Petugas" eyebrow="Administrator">
+        {page}
+    </AppLayout>
+);
+
+export default Edit;

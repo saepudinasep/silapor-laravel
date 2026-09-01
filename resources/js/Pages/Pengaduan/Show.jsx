@@ -3,11 +3,11 @@ import Chat from "@/Components/Chat";
 import { Head } from "@inertiajs/react";
 import { useState } from "react";
 
-export default function Show({ pengaduan }) {
+function Show({ pengaduan }) {
     const [status, setStatus] = useState(pengaduan.status);
 
     return (
-        <AppLayout title="Detail Pengaduan" eyebrow="Masyarakat">
+        <>
             <Head title="Detail Pengaduan" />
 
             <div className="card" style={{ maxWidth: 640 }}>
@@ -50,6 +50,14 @@ export default function Show({ pengaduan }) {
                 sendUrl={route("pesan.store", pengaduan.id)}
                 onStatusChange={setStatus}
             />
-        </AppLayout>
+        </>
     );
 }
+
+Show.layout = (page) => (
+    <AppLayout title="Detail Pengaduan" eyebrow="Masyarakat">
+        {page}
+    </AppLayout>
+);
+
+export default Show;

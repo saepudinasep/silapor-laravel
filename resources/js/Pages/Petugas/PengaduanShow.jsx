@@ -3,19 +3,19 @@ import Chat from "@/Components/Chat";
 import { Head, router } from "@inertiajs/react";
 import { useState } from "react";
 
-export default function PengaduanShow({ pengaduan }) {
+function PengaduanShow({ pengaduan }) {
     const [status, setStatus] = useState(pengaduan.status);
 
     function handleStatusChange(e) {
         const newStatus = e.target.value;
-        setStatus(newStatus); // optimistic, biar dropdown langsung kerasa responsif
+        setStatus(newStatus);
         router.put(route("petugas.pengaduan.updateStatus", pengaduan.id), {
             status: newStatus,
         });
     }
 
     return (
-        <AppLayout title="Detail Pengaduan" eyebrow="Petugas">
+        <>
             <Head title="Detail Pengaduan" />
 
             <div className="card" style={{ maxWidth: 640 }}>
@@ -90,6 +90,14 @@ export default function PengaduanShow({ pengaduan }) {
                 sendUrl={route("pesan.store", pengaduan.id)}
                 onStatusChange={setStatus}
             />
-        </AppLayout>
+        </>
     );
 }
+
+PengaduanShow.layout = (page) => (
+    <AppLayout title="Detail Pengaduan" eyebrow="Petugas">
+        {page}
+    </AppLayout>
+);
+
+export default PengaduanShow;

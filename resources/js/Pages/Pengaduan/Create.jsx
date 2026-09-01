@@ -2,7 +2,7 @@ import AppLayout from "@/Layouts/AppLayout";
 import { Head, useForm } from "@inertiajs/react";
 import { useState } from "react";
 
-export default function Create() {
+function Create() {
     const { data, setData, post, processing, errors } = useForm({
         isi_laporan: "",
         foto: null,
@@ -23,7 +23,7 @@ export default function Create() {
     }
 
     return (
-        <AppLayout title="Buat Laporan" eyebrow="Masyarakat">
+        <>
             <Head title="Buat Laporan" />
 
             <div className="card" style={{ maxWidth: 560 }}>
@@ -78,6 +78,14 @@ export default function Create() {
                     </button>
                 </form>
             </div>
-        </AppLayout>
+        </>
     );
 }
+
+Create.layout = (page) => (
+    <AppLayout title="Buat Laporan" eyebrow="Masyarakat">
+        {page}
+    </AppLayout>
+);
+
+export default Create;

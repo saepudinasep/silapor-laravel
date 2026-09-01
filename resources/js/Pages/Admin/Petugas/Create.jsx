@@ -1,7 +1,7 @@
 import AppLayout from "@/Layouts/AppLayout";
 import { Head, Link, useForm } from "@inertiajs/react";
 
-export default function Create() {
+function Create() {
     const { data, setData, post, processing, errors } = useForm({
         name: "",
         username: "",
@@ -16,7 +16,7 @@ export default function Create() {
     }
 
     return (
-        <AppLayout title="Tambah Petugas" eyebrow="Administrator">
+        <>
             <Head title="Tambah Petugas" />
 
             <div className="card" style={{ maxWidth: 480 }}>
@@ -124,6 +124,14 @@ export default function Create() {
                     </div>
                 </form>
             </div>
-        </AppLayout>
+        </>
     );
 }
+
+Create.layout = (page) => (
+    <AppLayout title="Tambah Petugas" eyebrow="Administrator">
+        {page}
+    </AppLayout>
+);
+
+export default Create;
