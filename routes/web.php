@@ -61,9 +61,9 @@ Route::middleware('auth')->group(function () {
 
 require __DIR__ . '/auth.php';
 
-Route::middleware(['auth', 'verified', 'role:masyarakat'])->group(function () {
-    Route::get('/home', [HomeController::class, 'index'])->name('home');
-});
+// Route::middleware(['auth', 'verified', 'role:masyarakat'])->group(function () {
+//     Route::get('/home', [HomeController::class, 'index'])->name('home');
+// });
 
 Route::middleware(['auth', 'verified', 'role:admin'])
     ->prefix('dashboard/admin')
@@ -81,10 +81,10 @@ Route::middleware(['auth', 'verified', 'role:petugas'])
 
 Route::middleware(['auth', 'verified', 'role:masyarakat'])->group(function () {
     Route::get('/home', [HomeController::class, 'index'])->name('home');
-
     Route::get('/pengaduan/create', [PengaduanController::class, 'create'])->name('pengaduan.create');
     Route::post('/pengaduan', [PengaduanController::class, 'store'])->name('pengaduan.store');
     Route::get('/pengaduan/{pengaduan}', [PengaduanController::class, 'show'])->name('pengaduan.show');
+    Route::post('/pengaduan/{pengaduan}/dibaca', [PengaduanController::class, 'markRead'])->name('pesan.dibaca'); // ← tambahkan ini
 });
 
 Route::middleware(['auth', 'verified', 'role:petugas,admin'])
@@ -93,7 +93,7 @@ Route::middleware(['auth', 'verified', 'role:petugas,admin'])
     ->group(function () {
         Route::get('/{pengaduan}', [PetugasPengaduanController::class, 'show'])->name('show');
         Route::put('/{pengaduan}/status', [PetugasPengaduanController::class, 'updateStatus'])->name('updateStatus');
-        // Route::post('/{pengaduan}/tanggapan', [PetugasPengaduanController::class, 'storeTanggapan'])->name('tanggapan.store');
+        Route::post('/{pengaduan}/dibaca', [PetugasPengaduanController::class, 'markRead'])->name('markRead'); // ← tambahkan ini
     });
 
 Route::middleware(['auth', 'verified', 'role:admin'])

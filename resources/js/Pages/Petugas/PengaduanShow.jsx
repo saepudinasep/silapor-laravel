@@ -14,6 +14,18 @@ function PengaduanShow({ pengaduan }) {
         });
     }
 
+    function handleNewMessage() {
+        router.post(
+            route("petugas.pengaduan.markRead", pengaduan.id),
+            {},
+            {
+                preserveScroll: true,
+                preserveState: true,
+                only: ["notifications"],
+            },
+        );
+    }
+
     return (
         <>
             <Head title="Detail Pengaduan" />
@@ -89,6 +101,7 @@ function PengaduanShow({ pengaduan }) {
                 initialMessages={pengaduan.pesans}
                 sendUrl={route("pesan.store", pengaduan.id)}
                 onStatusChange={setStatus}
+                onNewMessage={handleNewMessage}
             />
         </>
     );

@@ -50,9 +50,15 @@ class PesanController extends Controller
             broadcast(new StatusPengaduanDiubah($pengaduan));
         }
 
-        // Petugas/admin kirim pesan → ping lonceng notifikasi masyarakat
-        // pemilik pengaduan ini, biar update instan tanpa nunggu polling.
-        if ($user->role !== User::ROLE_MASYARAKAT) {
+        if ($user->role === User::ROLE_MASYARAKAT) {
+            // Masyarakat kirim pesan (baru maupun susulan) → ping semua
+            // petugas/admin, biar lonceng mereka update instan.
+            broadcast(new NotifikasiDiperbarui([
+                new PrivateChannel('petugas-notifikasi'),
+            ]));
+        } else {
+            // Petugas/admin kirim pesan → ping lonceng masyarakat
+            // pemilik pengaduan ini.
             broadcast(new NotifikasiDiperbarui([
                 new PrivateChannel('App.Models.User.' . $pengaduan->user_id),
             ]));

@@ -67,7 +67,7 @@ class HandleInertiaRequests extends Middleware
                 ->take(5)
                 ->get()
                 ->map(fn(Pesan $p) => [
-                    'id' => $p->id,
+                    'id' => 'pesan-' . $p->id,
                     'judul' => $p->pengirim->name,
                     'isi' => $p->isi_pesan,
                     'waktu' => $p->created_at,
@@ -81,24 +81,40 @@ class HandleInertiaRequests extends Middleware
         }
 
         if (in_array($user->role, [User::ROLE_PETUGAS, User::ROLE_ADMIN], true)) {
-            $baseQuery = Pengaduan::where('status', Pengaduan::STATUS_BARU);
-
-            $latest = (clone $baseQuery)
+            $pengaduanBaru = Pengaduan::where('status', Pengaduan::STATUS_BARU)
                 ->with('pelapor')
-                ->latest('tgl_pengaduan')
-                ->take(5)
                 ->get()
                 ->map(fn(Pengaduan $p) => [
-                    'id' => $p->id,
+                    'id' => 'pengaduan-' . $p->id,
                     'judul' => $p->pelapor?->name ?? 'Warga',
                     'isi' => $p->isi_laporan,
                     'waktu' => $p->tgl_pengaduan,
                     'url' => route('petugas.pengaduan.show', $p->id, false),
                 ]);
 
+            $pesanSusulan = Pesan::whereHas(
+                'pengaduan',
+                fn($q) => $q->where('status', '!=', Pengaduan::STATUS_BARU)
+            )
+                ->whereHas('pengirim', fn($q) => $q->where('role', User::ROLE_MASYARAKAT))
+                ->whereNull('dibaca_at')
+                ->with('pengirim')
+                ->get()
+                ->map(fn(Pesan $p) => [
+                    'id' => 'pesan-' . $p->id,
+                    'judul' => $p->pengirim->name,
+                    'isi' => $p->isi_pesan,
+                    'waktu' => $p->created_at,
+                    'url' => route('petugas.pengaduan.show', $p->pengaduan_id, false),
+                ]);
+
+            $combined = $pengaduanBaru->concat($pesanSusulan)
+                ->sortByDesc('waktu')
+                ->values();
+
             return [
-                'count' => $baseQuery->count(),
-                'latest' => $latest,
+                'count' => $combined->count(),
+                'latest' => $combined->take(5)->values(),
             ];
         }
 

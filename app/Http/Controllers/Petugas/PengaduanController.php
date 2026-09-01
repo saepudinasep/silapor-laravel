@@ -12,16 +12,27 @@ use Inertia\Response;
 
 class PengaduanController extends Controller
 {
-    /**
-     * Detail pengaduan, boleh diakses semua petugas/admin (bukan cuma pemilik).
-     */
     public function show(Pengaduan $pengaduan): Response
     {
+        $this->markPesanDibaca($pengaduan);
+
         $pengaduan->load(['pelapor', 'pesans.pengirim']);
 
         return Inertia::render('Petugas/PengaduanShow', [
             'pengaduan' => $pengaduan,
         ]);
+    }
+
+    /**
+     * Endpoint ringan buat mark-as-read TANPA reload halaman — dipanggil
+     * dari Chat.jsx tiap ada pesan baru masuk real-time selagi petugas
+     * lagi standby di halaman detail ini.
+     */
+    public function markRead(Pengaduan $pengaduan): RedirectResponse
+    {
+        $this->markPesanDibaca($pengaduan);
+
+        return back();
     }
 
     /**
@@ -38,6 +49,14 @@ class PengaduanController extends Controller
         broadcast(new StatusPengaduanDiubah($pengaduan));
 
         return back()->with('success', "Status diperbarui: {$request->status}");
+    }
+
+    private function markPesanDibaca(Pengaduan $pengaduan): void
+    {
+        $pengaduan->pesans()
+            ->whereHas('pengirim', fn($q) => $q->where('role', \App\Models\User::ROLE_MASYARAKAT))
+            ->whereNull('dibaca_at')
+            ->update(['dibaca_at' => now()]);
     }
 
     /**

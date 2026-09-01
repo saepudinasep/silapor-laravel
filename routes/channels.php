@@ -24,3 +24,7 @@ Broadcast::channel('pengaduan.{pengaduanId}', function (User $user, int $pengadu
 Broadcast::channel('petugas-notifikasi', function (User $user) {
     return in_array($user->role, [User::ROLE_PETUGAS, User::ROLE_ADMIN], true);
 });
+
+Broadcast::channel('App.Models.User.{id}', function (User $user, int $id) {
+    return (int) $user->id === $id;
+});
