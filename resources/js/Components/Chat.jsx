@@ -6,6 +6,7 @@ export default function Chat({
     initialMessages,
     sendUrl,
     onStatusChange,
+    onNewMessage,
 }) {
     const { auth } = usePage().props;
     const [messages, setMessages] = useState(initialMessages);
@@ -20,6 +21,7 @@ export default function Chat({
             setMessages((prev) =>
                 prev.some((m) => m.id === e.id) ? prev : [...prev, e],
             );
+            onNewMessage?.(e);
         });
 
         channel.listen(".status.diubah", (e) => {

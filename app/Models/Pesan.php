@@ -17,7 +17,18 @@ class Pesan extends Model
         'pengaduan_id',
         'user_id',
         'isi_pesan',
+        'dibaca_at',
     ];
+
+    /**
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'dibaca_at' => 'datetime',
+        ];
+    }
 
 
     /*

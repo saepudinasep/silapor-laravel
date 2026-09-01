@@ -57,7 +57,9 @@ class HandleInertiaRequests extends Middleware
             $baseQuery = Pesan::whereHas(
                 'pengaduan',
                 fn($q) => $q->where('user_id', $user->id)
-            )->where('user_id', '!=', $user->id);
+            )
+                ->where('user_id', '!=', $user->id)
+                ->whereNull('dibaca_at');
 
             $latest = (clone $baseQuery)
                 ->with('pengirim')

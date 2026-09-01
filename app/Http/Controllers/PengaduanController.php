@@ -42,8 +42,6 @@ class PengaduanController extends Controller
             'status' => Pengaduan::STATUS_BARU,
         ]);
 
-        // Ping lonceng notifikasi semua petugas/admin, biar langsung
-        // kelihatan tanpa nunggu polling.
         broadcast(new NotifikasiDiperbarui([
             new PrivateChannel('petugas-notifikasi'),
         ]));
@@ -58,12 +56,35 @@ class PengaduanController extends Controller
      */
     public function show(Request $request, Pengaduan $pengaduan): Response
     {
-        abort_unless($pengaduan->user_id === $request->user()?->id, 403);
+        $user = $request->user();
+
+        abort_unless($pengaduan->user_id === $user?->id, 403);
+
+        $this->markPesanDibaca($pengaduan, $user->id);
 
         $pengaduan->load(['pesans.pengirim']);
 
         return Inertia::render('Pengaduan/Show', [
             'pengaduan' => $pengaduan,
         ]);
+    }
+
+    public function markRead(Request $request, Pengaduan $pengaduan): RedirectResponse
+    {
+        $user = $request->user();
+
+        abort_unless($pengaduan->user_id === $user?->id, 403);
+
+        $this->markPesanDibaca($pengaduan, $user->id);
+
+        return back();
+    }
+
+    private function markPesanDibaca(Pengaduan $pengaduan, int $userId): void
+    {
+        $pengaduan->pesans()
+            ->where('user_id', '!=', $userId)
+            ->whereNull('dibaca_at')
+            ->update(['dibaca_at' => now()]);
     }
 }
