@@ -5,6 +5,7 @@ function Create() {
     const { data, setData, post, processing, errors } = useForm({
         name: "",
         username: "",
+        email: "",
         password: "",
         telp: "",
         role: "petugas",
@@ -59,6 +60,25 @@ function Create() {
                                 style={{ color: "#ef4444" }}
                             >
                                 {errors.username}
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="form-group">
+                        <label htmlFor="email">Email Aktif</label>
+                        <input
+                            id="email"
+                            type="email"
+                            value={data.email}
+                            onChange={(e) => setData("email", e.target.value)}
+                            required
+                        />
+                        {errors.email && (
+                            <div
+                                className="mt-1 text-sm"
+                                style={{ color: "#ef4444" }}
+                            >
+                                {errors.email}
                             </div>
                         )}
                     </div>

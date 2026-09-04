@@ -97,6 +97,13 @@ return [
 
     ],
 
+    'markdown' => [
+        'theme' => 'silapor', // sebelumnya 'default'
+        'paths' => [
+            resource_path('views/vendor/mail'),
+        ],
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | Global "From" Address

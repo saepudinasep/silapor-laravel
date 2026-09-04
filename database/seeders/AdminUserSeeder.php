@@ -14,8 +14,8 @@ class AdminUserSeeder extends Seeder
      */
     public function run(): void
     {
-        $username = env('SEED_ADMIN_USERNAME');
-        $password = env('SEED_ADMIN_PASSWORD');
+        $username = env('SEED_ADMIN_USERNAME', 'admin123');
+        $password = env('SEED_ADMIN_PASSWORD', 'password123');
 
         if (User::where('username', $username)->exists()) {
             $this->command->info("akun admin '{$username}' sudah ada, seeding dilewati");
@@ -26,10 +26,11 @@ class AdminUserSeeder extends Seeder
             'name' => 'Administrator',
             'username' => $username,
             'email' => $username . '@gmail.com',
+            'email_verified_at' => now(),
             'password' => Hash::make($password),
             'role' => User::ROLE_ADMIN,
         ]);
 
-        $this->command->info("akun admin berhasil dibuat: {$username}/{$password}");
+        $this->command->info("akun admin berhasil dibuat: {$username} / {$password}");
     }
 }

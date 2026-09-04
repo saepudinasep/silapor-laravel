@@ -1,15 +1,12 @@
 import { Head, Link, useForm, usePage } from "@inertiajs/react";
+import { alertSuccess } from "@/utils/swal";
 import { useEffect } from "react";
 import "../../../css/landing.css";
 
-export default function ForgotPassword() {
+export default function ForgotPassword({ status }) {
     const { flash } = usePage().props;
-
-    const { data, setData, post, processing, errors, reset } = useForm({
-        as_role: "masyarakat",
-        identifier: "",
-        password: "",
-        password_confirmation: "",
+    const { data, setData, post, processing, errors } = useForm({
+        email: "",
     });
 
     useEffect(() => {
@@ -20,9 +17,7 @@ export default function ForgotPassword() {
 
     function submit(e) {
         e.preventDefault();
-        post(route("password.email"), {
-            onFinish: () => reset("password", "password_confirmation"),
-        });
+        post(route("password.email"));
     }
 
     return (
@@ -58,114 +53,46 @@ export default function ForgotPassword() {
 
                 <h1>Lupa Password</h1>
                 <p className="subtitle">
-                    Verifikasi identitas Anda, lalu buat password baru
+                    Masukkan email yang terdaftar, kami akan kirimkan link untuk
+                    membuat password baru.
                 </p>
 
-                <div
-                    style={{
-                        display: "flex",
-                        gap: 8,
-                        marginBottom: 18,
-                        background: "rgba(255,255,255,0.05)",
-                        padding: 4,
-                        borderRadius: 10,
-                    }}
-                >
-                    <button
-                        type="button"
-                        className={
-                            data.as_role === "masyarakat"
-                                ? "btn"
-                                : "btn secondary"
-                        }
-                        style={{ flex: 1, width: "auto" }}
-                        onClick={() => setData("as_role", "masyarakat")}
+                {status && (
+                    <div
+                        className="mb-4 text-sm font-medium"
+                        style={{ color: "var(--teal)" }}
                     >
-                        Masyarakat
-                    </button>
-                    <button
-                        type="button"
-                        className={
-                            data.as_role === "petugas" ? "btn" : "btn secondary"
-                        }
-                        style={{ flex: 1, width: "auto" }}
-                        onClick={() => setData("as_role", "petugas")}
-                    >
-                        Petugas / Admin
-                    </button>
-                </div>
+                        {status}
+                    </div>
+                )}
 
                 <form onSubmit={submit}>
                     <div className="form-group">
-                        <label htmlFor="identifier">
-                            {data.as_role === "masyarakat"
-                                ? "NIK (16 digit)"
-                                : "Username"}
-                        </label>
+                        <label htmlFor="email">Email</label>
                         <input
-                            id="identifier"
-                            value={data.identifier}
-                            maxLength={
-                                data.as_role === "masyarakat" ? 16 : undefined
-                            }
-                            onChange={(e) =>
-                                setData("identifier", e.target.value)
-                            }
+                            id="email"
+                            type="email"
+                            value={data.email}
+                            onChange={(e) => setData("email", e.target.value)}
+                            autoFocus
                             required
                         />
-                        {errors.identifier && (
+                        {errors.email && (
                             <div
                                 className="mt-1 text-sm"
                                 style={{ color: "#ef4444" }}
                             >
-                                {errors.identifier}
+                                {errors.email}
                             </div>
                         )}
-                    </div>
-
-                    <div className="form-group">
-                        <label htmlFor="password">Password Baru</label>
-                        <input
-                            id="password"
-                            type="password"
-                            value={data.password}
-                            onChange={(e) =>
-                                setData("password", e.target.value)
-                            }
-                            required
-                        />
-                        {errors.password && (
-                            <div
-                                className="mt-1 text-sm"
-                                style={{ color: "#ef4444" }}
-                            >
-                                {errors.password}
-                            </div>
-                        )}
-                    </div>
-
-                    <div className="form-group">
-                        <label htmlFor="password_confirmation">
-                            Konfirmasi Password Baru
-                        </label>
-                        <input
-                            id="password_confirmation"
-                            type="password"
-                            value={data.password_confirmation}
-                            onChange={(e) =>
-                                setData("password_confirmation", e.target.value)
-                            }
-                            required
-                        />
                     </div>
 
                     <button className="btn" disabled={processing}>
-                        {processing ? "Memproses..." : "Reset Password"}
+                        {processing ? "Mengirim..." : "Kirim Link Reset"}
                     </button>
                 </form>
 
                 <div className="switch-link">
-                    Sudah ingat password?{" "}
                     <Link href={route("login")}>Kembali masuk</Link>
                 </div>
             </div>

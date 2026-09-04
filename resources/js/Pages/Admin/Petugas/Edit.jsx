@@ -4,6 +4,7 @@ import { Head, Link, useForm } from "@inertiajs/react";
 function Edit({ petugas }) {
     const { data, setData, put, processing, errors } = useForm({
         name: petugas.name,
+        email: petugas.email,
         telp: petugas.telp ?? "",
         role: petugas.role,
     });
@@ -49,6 +50,26 @@ function Edit({ petugas }) {
                             disabled
                             title="Username tidak bisa diubah"
                         />
+                    </div>
+
+                    <div className="form-group">
+                        <label htmlFor="email">Email Aktif</label>
+                        <input
+                            id="email"
+                            type="email"
+                            value={data.email}
+                            onChange={(e) => setData("email", e.target.value)}
+                            placeholder="Dipakai untuk lupa password"
+                            required
+                        />
+                        {errors.email && (
+                            <div
+                                className="mt-1 text-sm"
+                                style={{ color: "#ef4444" }}
+                            >
+                                {errors.email}
+                            </div>
+                        )}
                     </div>
 
                     <div className="form-group">

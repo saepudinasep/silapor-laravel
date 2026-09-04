@@ -40,6 +40,7 @@ class PetugasController extends Controller
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'username' => ['required', 'string', 'max:255', 'unique:' . User::class],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:' . User::class],
             'password' => ['required', 'string', 'min:6'],
             'telp' => ['nullable', 'string', 'max:20'],
             'role' => ['required', Rule::in([User::ROLE_ADMIN, User::ROLE_PETUGAS])],
@@ -48,7 +49,8 @@ class PetugasController extends Controller
         User::create([
             'name' => $validated['name'],
             'username' => $validated['username'],
-            'email' => $validated['username'] . '@gmail.com',
+            'email' => $validated['email'],
+            'email_verified_at' => now(),
             'password' => Hash::make($validated['password']),
             'telp' => $validated['telp'] ?? null,
             'role' => $validated['role'],
@@ -64,7 +66,7 @@ class PetugasController extends Controller
         abort_unless(in_array($user->role, [User::ROLE_ADMIN, User::ROLE_PETUGAS], true), 404);
 
         return Inertia::render('Admin/Petugas/Edit', [
-            'petugas' => $user->only(['id', 'name', 'username', 'telp', 'role']),
+            'petugas' => $user->only(['id', 'name', 'username', 'email', 'telp', 'role']),
         ]);
     }
 
@@ -77,6 +79,7 @@ class PetugasController extends Controller
 
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
             'telp' => ['nullable', 'string', 'max:20'],
             'role' => ['required', Rule::in([User::ROLE_ADMIN, User::ROLE_PETUGAS])],
         ]);

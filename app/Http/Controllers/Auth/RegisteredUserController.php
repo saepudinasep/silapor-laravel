@@ -40,6 +40,7 @@ class RegisteredUserController extends Controller
             ],
             'nama' => ['required', 'string', 'max:255'],
             'username' => ['required', 'string', 'max:255', 'unique:' . User::class],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:' . User::class],
             'password' => ['required', 'string', Rules\Password::defaults()],
             'telp' => ['nullable', 'string', 'max:20'],
         ], [
@@ -50,16 +51,21 @@ class RegisteredUserController extends Controller
             'nik' => $request->nik,
             'name' => $request->nama,
             'username' => $request->username,
-            'email' => $request->username . '@gmail.com',
+            'email' => $request->email,
             'password' => Hash::make($request->password),
             'telp' => $request->telp,
             'role' => User::ROLE_MASYARAKAT,
         ]);
 
+        // Trigger listener SendEmailVerificationNotification (didaftarkan
+        // di AppServiceProvider) — mengirim email link verifikasi.
         event(new Registered($user));
 
         Auth::login($user);
 
+        // Middleware 'verified' di route 'home' otomatis akan mengarahkan
+        // user ke halaman "Verifikasi Email Anda" sampai dia klik link
+        // di emailnya.
         return redirect(route('home', absolute: false));
     }
 }

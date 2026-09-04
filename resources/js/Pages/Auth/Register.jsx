@@ -1,23 +1,15 @@
-import { Head, Link, useForm, usePage } from "@inertiajs/react";
-import { useEffect } from "react";
+import { Head, Link, useForm } from "@inertiajs/react";
 import "../../../css/landing.css";
 
 export default function Register() {
-    const { flash } = usePage().props;
-
     const { data, setData, post, processing, errors, reset } = useForm({
         nik: "",
         nama: "",
         username: "",
+        email: "",
         password: "",
         telp: "",
     });
-
-    useEffect(() => {
-        if (flash?.success) {
-            alertSuccess(flash.success);
-        }
-    }, [flash]);
 
     const submit = (e) => {
         e.preventDefault();
@@ -59,7 +51,8 @@ export default function Register() {
 
                 <h1>Daftar Akun</h1>
                 <p className="subtitle">
-                    Buat akun untuk mulai melaporkan pengaduan
+                    Buat akun untuk mulai melaporkan pengaduan. Email wajib
+                    diisi dengan alamat aktif untuk verifikasi.
                 </p>
 
                 <form onSubmit={submit}>
@@ -116,6 +109,26 @@ export default function Register() {
                                 style={{ color: "#ef4444" }}
                             >
                                 {errors.username}
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="form-group">
+                        <label htmlFor="email">Email Aktif</label>
+                        <input
+                            id="email"
+                            type="email"
+                            value={data.email}
+                            onChange={(e) => setData("email", e.target.value)}
+                            placeholder="nama@email.com"
+                            required
+                        />
+                        {errors.email && (
+                            <div
+                                className="mt-1 text-sm"
+                                style={{ color: "#ef4444" }}
+                            >
+                                {errors.email}
                             </div>
                         )}
                     </div>
